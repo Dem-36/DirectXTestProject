@@ -1,0 +1,2 @@
+D:\C++\ChiliTomatoYoutubeDirectX\Project1\Debug\Project1.exe
+D:\C++\ChiliTomatoYoutubeDirectX\Project1\Debug\Project1.pdb
