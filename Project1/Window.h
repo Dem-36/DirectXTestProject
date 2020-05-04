@@ -38,7 +38,7 @@ private:
 		HINSTANCE hInstance;
 	};
 public:
-	Window(int width, int height, const char* name)noexcept;
+	Window(int width, int height, const char* name);
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
@@ -56,6 +56,8 @@ private:
 //プリプロセッサが__LINE__を行番号の整数に変換する
 //プリプロセッサが__FILE__をPGMのファイル名
 #define WIN_EXCEPT(hr) Window::Exception(__LINE__,__FILE__,hr)
+//GetLastError() = 呼び出し側のスレッドが持つ最新のエラーコードを取得
+#define WIN_LAST_EXCEPT() Window::Exception(__LINE__,__FILE__,GetLastError())
 
 #endif
 

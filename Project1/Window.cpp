@@ -1,5 +1,6 @@
 #include "Window.h"
 #include<sstream>
+#include"resource.h"
 
 //Window Class Stuff
 Window::WindowClass Window::WindowClass::wndClass;
@@ -17,11 +18,11 @@ Window::WindowClass::WindowClass()noexcept
 	wc.cbWndExtra = 0;                 //ウィンドウインスタンスの後ろに割り当てる補足バイト数
 	wc.hInstance = GetInstance();      //ウィンドウプロシージャのインスタンスハンドル
 	wc.hCursor = nullptr;              //マウスカーソルのハンドル(LoadCursor)
-	wc.hIcon = nullptr;                //アイコンのハンドル(WindowApp作るとき参照)
+	wc.hIcon = LoadIcon(GetInstance(),MAKEINTRESOURCE(IDI_ICON2));//アイコンのハンドル(WindowApp作るとき参照)
 	wc.hbrBackground = nullptr;        //ウィンドウの背景色
 	wc.lpszMenuName = nullptr;         //デフォルトメニュー名
 	wc.lpszClassName = GetName();      //ウィンドウクラス名
-	wc.hIconSm = nullptr;              //16×16の小さいサイズのアイコン
+	wc.hIconSm = LoadIcon(wc.hInstance, MAKEINTRESOURCE(IDI_ICON2));              //16×16の小さいサイズのアイコン
 	//ウィンドウクラスの登録
 	RegisterClassEx(&wc);
 }
@@ -40,14 +41,24 @@ HINSTANCE Window::WindowClass::GetInstance()noexcept {
 }
 
 //Window Stuff
-Window::Window(int width, int height, const char* name)noexcept {
+Window::Window(int width, int height, const char* name) {
 	//calculate window size based on desired client region size
 	RECT wr;
 	wr.left = 100;
 	wr.right = width + wr.left;
 	wr.top = 100;
 	wr.bottom = height + wr.top;
+
 	AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
+
+	//わざとエラーを表示する
+	//自作例外処理
+	//throw WIN_EXCEPT(ERROR_ARENA_TRASHED);
+	//標準例外処理
+	//throw std::runtime_error("butts butts buuuuuuuuuuuttsssssssss");
+	//Unknown Exception
+	//throw 123456789;
+
 	// ウィンドウの作成 & HWNDの取得
 	hWnd = CreateWindow(
 		WindowClass::GetName(),
@@ -62,6 +73,10 @@ Window::Window(int width, int height, const char* name)noexcept {
 		WindowClass::GetInstance(),
 		this
 		);
+	//ウィンドウが正常に作られたかどうか
+	if (hWnd == nullptr) {
+		throw WIN_LAST_EXCEPT();
+	}
 
 	//ウィンドウの表示
 	ShowWindow(hWnd, SW_SHOWDEFAULT);

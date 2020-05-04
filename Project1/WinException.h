@@ -20,7 +20,7 @@ public:
 private:
 	//例外がスローされた行番号
 	int line;
-	//その行のファイル
+	//エラーの発生したファイル名
 	std::string file;
 protected:
 	//mutable = const内で値をいじるときに使用

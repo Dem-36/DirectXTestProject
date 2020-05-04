@@ -28,6 +28,7 @@ const std::string& WinException::GetFile()const noexcept {
 	return file;
 }
 
+//どこのファイルのどの行でエラーが出たかを取得する
 std::string WinException::GetOriginString()const noexcept {
 	std::ostringstream oss;
 	oss << "[File] " << file << std::endl
