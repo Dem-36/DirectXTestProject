@@ -18,7 +18,7 @@ Window::WindowClass::WindowClass()noexcept
 	wc.cbWndExtra = 0;                 //ウィンドウインスタンスの後ろに割り当てる補足バイト数
 	wc.hInstance = GetInstance();      //ウィンドウプロシージャのインスタンスハンドル
 	wc.hCursor = nullptr;              //マウスカーソルのハンドル(LoadCursor)
-	wc.hIcon = LoadIcon(GetInstance(),MAKEINTRESOURCE(IDI_ICON2));//アイコンのハンドル(WindowApp作るとき参照)
+	wc.hIcon = LoadIcon(GetInstance(), MAKEINTRESOURCE(IDI_ICON2));//アイコンのハンドル(WindowApp作るとき参照)
 	wc.hbrBackground = nullptr;        //ウィンドウの背景色
 	wc.lpszMenuName = nullptr;         //デフォルトメニュー名
 	wc.lpszClassName = GetName();      //ウィンドウクラス名
@@ -117,6 +117,25 @@ LRESULT Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexce
 	case WM_CLOSE:
 		PostQuitMessage(0);
 		break;
+		//キーボードフォーカスを失う直前に呼ばれる
+	case WM_KILLFOCUS:
+		keyboard.ClearState();
+		break;
+		//キーボード処理
+	case WM_KEYDOWN:
+		//Altキーなどのシステムキーを追跡したいならWM_SYSKEYDOWNを指定する
+	case WM_SYSKEYDOWN:
+		if (!(lParam & 0x40000000) || keyboard.AutoRepeatIsEnabled())
+			keyboard.OnKeyPressed(static_cast<unsigned char>(wParam));
+		break;
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		keyboard.OnKeyReleased(static_cast<unsigned char>(wParam));
+		break;
+	case WM_CHAR:
+		keyboard.OnChar(static_cast<unsigned char>(wParam));
+		break;
+		//キーボード処理 終了
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
@@ -162,10 +181,10 @@ std::string Window::Exception::TranslateErrorCode(HRESULT hr)noexcept {
 	return errorString;
 }
 
-HRESULT Window::Exception::GetErrorCode() const noexcept{
+HRESULT Window::Exception::GetErrorCode() const noexcept {
 	return hr;
 }
 
-std::string Window::Exception::GetErrorString() const noexcept{
+std::string Window::Exception::GetErrorString() const noexcept {
 	return TranslateErrorCode(hr);
 }

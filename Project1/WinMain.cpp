@@ -17,6 +17,9 @@ int CALLBACK WinMain(
 			TranslateMessage(&msg);
 			//プロシージャにメッセージを送る
 			DispatchMessage(&msg);
+			if (wnd.keyboard.KeyIsPressed(VK_MENU)) {
+				MessageBox(nullptr, "Something Happon!", "Space Key Was Pressed", MB_OK | MB_ICONQUESTION);
+			}
 		}
 
 		return msg.wParam;
