@@ -2,7 +2,7 @@
 #include<sstream>
 #include"resource.h"
 
-//Window Class Stuff
+//Window Class Stuff ここでWindowClass のコンストラクタが呼ばれる
 Window::WindowClass Window::WindowClass::wndClass;
 
 //コンストラクタ
@@ -41,7 +41,8 @@ HINSTANCE Window::WindowClass::GetInstance()noexcept {
 }
 
 //Window Stuff
-Window::Window(int width, int height, const char* name) {
+Window::Window(int width, int height, const char* name)
+	:width(width), height(height) {
 	//calculate window size based on desired client region size
 	RECT wr;
 	wr.left = 100;
@@ -49,7 +50,9 @@ Window::Window(int width, int height, const char* name) {
 	wr.top = 100;
 	wr.bottom = height + wr.top;
 
-	AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
+	if (AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE) == 0) {
+		throw WIN_LAST_EXCEPT();
+	}
 
 	//わざとエラーを表示する
 	//自作例外処理
@@ -80,11 +83,39 @@ Window::Window(int width, int height, const char* name) {
 
 	//ウィンドウの表示
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
+	keyboard = new Keyboard();
+	mouse = new Mouse;
 }
 
 Window::~Window() {
 	//ウィンドウの破棄
 	DestroyWindow(hWnd);
+}
+
+//タイトルが正常にセットされない場合は例外処理を流す
+void Window::SetTitle(const std::string& title)
+{
+	if (SetWindowText(hWnd, title.c_str()) == 0) {
+		throw WIN_LAST_EXCEPT();
+	}
+}
+
+//解放処理
+void Window::Release()
+{
+	delete keyboard;
+	delete mouse;
+}
+
+//外部でキーボード判定を取得
+Keyboard* Window::GetKeyboard()
+{
+	return keyboard;
+}
+
+Mouse* Window::GetMouse()
+{
+	return mouse;
 }
 
 LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -117,25 +148,100 @@ LRESULT Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexce
 	case WM_CLOSE:
 		PostQuitMessage(0);
 		break;
+
+#pragma region Keyboard
+
 		//キーボードフォーカスを失う直前に呼ばれる
 	case WM_KILLFOCUS:
-		keyboard.ClearState();
+		keyboard->ClearState();
 		break;
 		//キーボード処理
 	case WM_KEYDOWN:
 		//Altキーなどのシステムキーを追跡したいならWM_SYSKEYDOWNを指定する
 	case WM_SYSKEYDOWN:
-		if (!(lParam & 0x40000000) || keyboard.AutoRepeatIsEnabled())
-			keyboard.OnKeyPressed(static_cast<unsigned char>(wParam));
+		if (!(lParam & 0x40000000) || keyboard->AutoRepeatIsEnabled())
+			keyboard->OnKeyPressed(static_cast<unsigned char>(wParam));
 		break;
 	case WM_KEYUP:
 	case WM_SYSKEYUP:
-		keyboard.OnKeyReleased(static_cast<unsigned char>(wParam));
+		keyboard->OnKeyReleased(static_cast<unsigned char>(wParam));
 		break;
 	case WM_CHAR:
-		keyboard.OnChar(static_cast<unsigned char>(wParam));
+		keyboard->OnChar(static_cast<unsigned char>(wParam));
 		break;
 		//キーボード処理 終了
+
+#pragma endregion Keyboard
+
+#pragma region Mouse
+
+	case WM_MOUSEMOVE: {
+		//lParamにマウス座標が記録されている
+		//MAKEPOINTSでPOINTS型の位置が取得できる
+		POINTS points = MAKEPOINTS(lParam);
+		//マウスがウィンドウ内にいるなら
+		if (points.x >= 0 && points.x < width &&
+			points.y >= 0 && points.y < height) {
+
+			mouse->OnMouseMove(points.x, points.y);
+			//マウスが外から入ってきたら = それまでウィンドウ内に存在しなかった
+			if (!mouse->IsInWindow()) {
+				//ボタンが離されるまでウィンドウの外にマウスが移動しても
+				//そのウィンドウがマウスを制御することができる
+				SetCapture(hWnd);
+				mouse->OnMouseEnter();
+			}
+		}
+		else {
+			//左又は右クリックが押されているなら
+			//https://docs.microsoft.com/en-us/windows/win32/inputdev/wm-mousemove
+			if (wParam & (MK_LBUTTON | MK_RBUTTON)) {
+				mouse->OnMouseMove(points.x, points.y);
+			}
+			else {
+				//マウスのキャプチャーを解放
+				ReleaseCapture();
+				mouse->OnMouseLeave();
+			}
+		}
+	}
+	case WM_LBUTTONDOWN: {
+		POINTS points = MAKEPOINTS(lParam);
+		mouse->OnLeftPressed(points.x, points.y);
+		break;
+	}
+	case WM_RBUTTONDOWN: {
+		POINTS points = MAKEPOINTS(lParam);
+		mouse->OnRightPressed(points.x, points.y);
+		break;
+	}
+	case WM_LBUTTONUP: {
+		POINTS points = MAKEPOINTS(lParam);
+		mouse->OnLeftReleased(points.x, points.y);
+		break;
+	}
+	case WM_RBUTTONUP: {
+		POINTS points = MAKEPOINTS(lParam);
+		mouse->OnRightReleased(points.x, points.y);
+		break;
+	}
+	case WM_MOUSEWHEEL: {
+		POINTS points = MAKEPOINTS(lParam);
+		int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+		mouse->OnWheelDelta(points.x, points.y, delta);
+		//wParamからホイールデルタ値を取得する
+		//数値が+なら前に、-なら後ろに動かしている
+		//0の場合は静止状態
+		//if (GET_WHEEL_DELTA_WPARAM(wParam) > 0) {
+		//	mouse->OnWheelUp(points.x, points.y);
+		//}
+		//else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0) {
+		//	mouse->OnWheelDown(points.x, points.y);
+		//}
+		break;
+	}
+#pragma endregion Mouse
+
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);

@@ -4,6 +4,7 @@
 #include"WinInc.h"
 #include"WinException.h"
 #include"Keyboard.h"
+#include"Mouse.h"
 
 class Window
 {
@@ -43,14 +44,18 @@ public:
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
+	void SetTitle(const std::string& title);
+	void Release();
+	Keyboard* GetKeyboard();
+	Mouse* GetMouse();
 private:
 	//プロシージャ
 	static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept;
-public:
-	Keyboard keyboard;
 private:
+	Keyboard* keyboard;
+	Mouse* mouse;
 	int width;
 	int height;
 	HWND hWnd;

@@ -4,6 +4,7 @@
 #include<queue>
 #include<bitset>
 
+//キーボードクラス
 class Keyboard
 {
 	//フレンドクラスの設定(Windowクラス内でKeyboardクラスのprivateが扱える)
@@ -61,7 +62,7 @@ public:
 	void FlushChar()noexcept;
 	void Flush();
 
-	//autorepeat control
+	//長押し判定
 	void EnableAutoRepeat()noexcept;
 	void DisableAutoRepeat()noexcept;
 	bool AutoRepeatIsEnabled()const noexcept;

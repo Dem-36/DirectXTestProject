@@ -1,5 +1,6 @@
 #include"WindowsMessageMap.h"
 #include"Window.h"
+#include<sstream>
 
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
@@ -17,11 +18,26 @@ int CALLBACK WinMain(
 			TranslateMessage(&msg);
 			//プロシージャにメッセージを送る
 			DispatchMessage(&msg);
-			if (wnd.keyboard.KeyIsPressed(VK_MENU)) {
+			if (wnd.GetKeyboard()->KeyIsPressed(VK_MENU)) {
 				MessageBox(nullptr, "Something Happon!", "Space Key Was Pressed", MB_OK | MB_ICONQUESTION);
 			}
+			while (!wnd.GetMouse()->IsEmpty()) {
+				const auto e = wnd.GetMouse()->Read();
+				switch (e.GetType()) {
+				case Mouse::Event::MouseType::Move: {
+					std::ostringstream oss;
+					oss << "Mouse Position: (" << e.GetX() << "," << e.GetY() << ")";
+					wnd.SetTitle(oss.str());
+					break;
+				}
+				case Mouse::Event::MouseType::Leave: {
+					wnd.SetTitle("Gone!");
+					break;
+				}
+				}
+			}
 		}
-
+		wnd.Release();
 		return msg.wParam;
 	}
 	catch (const WinException& e) {
@@ -33,7 +49,7 @@ int CALLBACK WinMain(
 	catch (...) {
 		MessageBox(nullptr, "No details available", "Unknown Exception", MB_OK | MB_ICONEXCLAMATION);
 	}
-	return - 1;
+	return -1;
 }
 
 /*
@@ -74,9 +90,9 @@ int CALLBACK WinMain(
 		640,                                     //幅
 		480,                                     //高さ
 		nullptr,                                 //親ウィンドウのハンドル
-		nullptr, 
+		nullptr,
 		hInstance,                               //ウィンドウに関連付けられたインスタンスハンドル
-		nullptr);                                
+		nullptr);
 
 	//show the damn window
 	ShowWindow(hWnd, nCmdShow);
