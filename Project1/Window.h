@@ -5,6 +5,9 @@
 #include"WinException.h"
 #include"Keyboard.h"
 #include"Mouse.h"
+#include"Graphics.h"
+#include <optional>
+#include<memory>
 
 class Window
 {
@@ -48,6 +51,8 @@ public:
 	void Release();
 	Keyboard* GetKeyboard();
 	Mouse* GetMouse();
+	static std::optional<int> ProcessMessage();
+	Graphics& Gfx();
 private:
 	//プロシージャ
 	static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -59,6 +64,8 @@ private:
 	int width;
 	int height;
 	HWND hWnd;
+	//リソースへのポインタ所有権を唯一持っている(コピー不可 ムーブを使うと所有権を譲渡できる)
+	std::unique_ptr<Graphics> pGfx;
 };
 
 //プリプロセッサが__LINE__を行番号の整数に変換する

@@ -85,6 +85,9 @@ Window::Window(int width, int height, const char* name)
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 	keyboard = new Keyboard();
 	mouse = new Mouse;
+
+	//create graphics object
+	pGfx = std::make_unique<Graphics>(hWnd);
 }
 
 Window::~Window() {
@@ -116,6 +119,26 @@ Keyboard* Window::GetKeyboard()
 Mouse* Window::GetMouse()
 {
 	return mouse;
+}
+
+std::optional<int> Window::ProcessMessage()
+{
+	MSG msg;
+	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+		if (msg.message == WM_QUIT) {
+			return (int)msg.wParam;
+		}
+		//キー入力メッセージを文字メッセージに変換する
+		TranslateMessage(&msg);
+		//プロシージャにメッセージを送る
+		DispatchMessage(&msg);
+	}
+	return {};
+}
+
+Graphics& Window::Gfx()
+{
+	return *pGfx;
 }
 
 LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {

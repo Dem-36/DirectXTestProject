@@ -1,6 +1,5 @@
 #include"WindowsMessageMap.h"
-#include"Window.h"
-#include<sstream>
+#include"App.h"
 
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
@@ -9,36 +8,7 @@ int CALLBACK WinMain(
 	int nCmdShow) {
 
 	try {
-		Window wnd(800, 300, "Donkey Fart Box");
-
-		MSG msg;
-		BOOL gResult;
-		while ((gResult = GetMessage(&msg, nullptr, 0, 0))) {
-			//キー入力メッセージを文字メッセージに変換する
-			TranslateMessage(&msg);
-			//プロシージャにメッセージを送る
-			DispatchMessage(&msg);
-			if (wnd.GetKeyboard()->KeyIsPressed(VK_MENU)) {
-				MessageBox(nullptr, "Something Happon!", "Space Key Was Pressed", MB_OK | MB_ICONQUESTION);
-			}
-			while (!wnd.GetMouse()->IsEmpty()) {
-				const auto e = wnd.GetMouse()->Read();
-				switch (e.GetType()) {
-				case Mouse::Event::MouseType::Move: {
-					std::ostringstream oss;
-					oss << "Mouse Position: (" << e.GetX() << "," << e.GetY() << ")";
-					wnd.SetTitle(oss.str());
-					break;
-				}
-				case Mouse::Event::MouseType::Leave: {
-					wnd.SetTitle("Gone!");
-					break;
-				}
-				}
-			}
-		}
-		wnd.Release();
-		return msg.wParam;
+		return App{}.Go();
 	}
 	catch (const WinException& e) {
 		MessageBox(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
