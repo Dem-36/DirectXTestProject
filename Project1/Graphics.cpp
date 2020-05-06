@@ -3,6 +3,8 @@
 
 #pragma comment(lib,"d3d11.lib")
 
+namespace wrl = Microsoft::WRL;
+
 Graphics::Graphics(HWND hWnd)
 {
 	//スワップチェーンに必要な構造体
@@ -42,37 +44,21 @@ Graphics::Graphics(HWND hWnd)
 		));
 
 	//バックバッファのハンドルを保持するポインタを作成
-	ID3D11Resource* pBackBuffer = nullptr;
-	GFX_THROW_FAILED(pSwap->GetBuffer(
-		0,
-		__uuidof(ID3D11Resource), 
-		reinterpret_cast<void**>(&pBackBuffer)));
-
+	wrl::ComPtr<ID3D11Resource> pBackBuffer = nullptr;
+	GFX_THROW_FAILED(pSwap->GetBuffer(0,__uuidof(ID3D11Resource), &pBackBuffer));
 	//レンダーターゲットの取得
 	GFX_THROW_FAILED(pDevice->CreateRenderTargetView(
-		pBackBuffer,
+		pBackBuffer.Get(),
 		nullptr,
 		&pTarget
 		));
-	pBackBuffer->Release();
-}
-
-Graphics::~Graphics()
-{
-	if (pTarget != nullptr)
-		pTarget->Release();
-	if (pSwap != nullptr)
-		pSwap->Release();
-	if (pContext != nullptr)
-		pContext->Release();
-	if (pDevice != nullptr)
-		pDevice->Release();
 }
 
 //描画処理
 void Graphics::EndFrame()
 {
 	HRESULT hr;
+	//バッファの入れ替え
 	if (FAILED(hr = pSwap->Present(1u, 0u))) {
 		if (hr == DXGI_ERROR_DEVICE_REMOVED) {
 			throw GFX_DEVICE_REMOVED_EXPRCT(pDevice->GetDeviceRemovedReason());
@@ -81,4 +67,10 @@ void Graphics::EndFrame()
 			GFX_THROW_FAILED(hr);
 		}
 	}
+}
+
+void Graphics::ClearBuffer(float red, float green, float blue) noexcept
+{
+	const float color[] = { red,green,blue,1.0f };
+	pContext->ClearRenderTargetView(pTarget.Get(), color);
 }
