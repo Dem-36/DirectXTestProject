@@ -1,4 +1,4 @@
-#ifndef _WINXCEPTION_H_
+#ifndef _WINEXCEPTION_H_
 #define _WINEXCEPTION_H_
 
 #include<exception>
@@ -12,7 +12,7 @@ class WinException:public std::exception
 public:
 	WinException(int line, const char* file)noexcept;
 	//実装定義のエラー内容の取得
-	const char* what()const noexcept override;
+    const char* what()const noexcept override;
 	virtual const char* GetType()const noexcept;
 	int GetLine()const noexcept;
 	const std::string& GetFile()const noexcept;

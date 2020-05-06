@@ -2,7 +2,7 @@
 #define _WINDOW_H_
 
 #include"WinInc.h"
-#include"WinException.h"
+#include"WinExceptionMacro.h"
 #include"Keyboard.h"
 #include"Mouse.h"
 #include"Graphics.h"
@@ -11,18 +11,6 @@
 
 class Window
 {
-public:
-	class Exception :public WinException {
-	public:
-		Exception(int line, const char* file, HRESULT hr)noexcept;
-		const char* what()const noexcept override;
-		virtual const char* GetType()const noexcept;
-		static std::string TranslateErrorCode(HRESULT hr)noexcept;
-		HRESULT GetErrorCode()const noexcept;
-		std::string GetErrorString()const noexcept;
-	private:
-		HRESULT hr;
-	};
 private:
 	//ウィンドウ作成クラス
 	//noexcept = その関数が例外処理を投げないことを保証する
@@ -67,12 +55,5 @@ private:
 	//リソースへのポインタ所有権を唯一持っている(コピー不可 ムーブを使うと所有権を譲渡できる)
 	std::unique_ptr<Graphics> pGfx;
 };
-
-//プリプロセッサが__LINE__を行番号の整数に変換する
-//プリプロセッサが__FILE__をPGMのファイル名
-#define WIN_EXCEPT(hr) Window::Exception(__LINE__,__FILE__,hr)
-//GetLastError() = 呼び出し側のスレッドが持つ最新のエラーコードを取得
-#define WIN_LAST_EXCEPT() Window::Exception(__LINE__,__FILE__,GetLastError())
-
 #endif
 

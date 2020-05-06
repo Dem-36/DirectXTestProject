@@ -1,4 +1,5 @@
 #include "Graphics.h"
+#include"WinExceptionMacro.h"
 
 #pragma comment(lib,"d3d11.lib")
 
@@ -23,8 +24,9 @@ Graphics::Graphics(HWND hWnd)
 	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	sd.Flags = 0;
 
+	HRESULT hr;
 	//デバイス、スワップチェーン、コンテキストを作成する
-	D3D11CreateDeviceAndSwapChain(
+	GFX_THROW_FAILED(D3D11CreateDeviceAndSwapChain(
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
@@ -37,17 +39,21 @@ Graphics::Graphics(HWND hWnd)
 		&pDevice,
 		nullptr,
 		&pContext
-		);
+		));
 
 	//バックバッファのハンドルを保持するポインタを作成
 	ID3D11Resource* pBackBuffer = nullptr;
-	pSwap->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer));
+	GFX_THROW_FAILED(pSwap->GetBuffer(
+		0,
+		__uuidof(ID3D11Resource), 
+		reinterpret_cast<void**>(&pBackBuffer)));
 
-	pDevice->CreateRenderTargetView(
+	//レンダーターゲットの取得
+	GFX_THROW_FAILED(pDevice->CreateRenderTargetView(
 		pBackBuffer,
 		nullptr,
 		&pTarget
-		);
+		));
 	pBackBuffer->Release();
 }
 
@@ -63,8 +69,16 @@ Graphics::~Graphics()
 		pDevice->Release();
 }
 
-//描画処理？？
+//描画処理
 void Graphics::EndFrame()
 {
-	pSwap->Present(1u, 0u);
+	HRESULT hr;
+	if (FAILED(hr = pSwap->Present(1u, 0u))) {
+		if (hr == DXGI_ERROR_DEVICE_REMOVED) {
+			throw GFX_DEVICE_REMOVED_EXPRCT(pDevice->GetDeviceRemovedReason());
+		}
+		else {
+			GFX_THROW_FAILED(hr);
+		}
+	}
 }

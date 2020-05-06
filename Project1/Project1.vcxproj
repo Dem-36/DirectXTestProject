@@ -144,9 +144,11 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="GraphicsException.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="WindowException.cpp" />
     <ClCompile Include="WinException.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowsMessageMap.cpp" />
@@ -155,13 +157,16 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="GraphicsException.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="WindowException.h" />
     <ClInclude Include="WinException.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowsMessageMap.h" />
+    <ClInclude Include="WinExceptionMacro.h" />
     <ClInclude Include="WinInc.h" />
   </ItemGroup>
   <ItemGroup>
