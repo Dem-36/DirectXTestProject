@@ -1,4 +1,19 @@
-float4 main(float2 position : POSITION):SV_POSITION
+struct appdata
 {
-    return float4(position.x, position.y, 0.0f, 1.0f);
+    float4 vertex : POSITION;
+    float4 color : COLOR;
+};
+
+struct v2f
+{
+    float4 position : SV_Position;
+    float3 color : COLOR;
+};
+
+v2f main(appdata v)
+{
+    v2f o;
+    o.position = float4(v.vertex.x, v.vertex.y, 0.0f, 1.0f);
+    o.color = v.color;
+    return o;
 }

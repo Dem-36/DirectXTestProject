@@ -90,12 +90,13 @@ void Graphics::DrawTriangle()
 	struct Vertex {
 		float x;
 		float y;
+		unsigned char r, g, b, a;
 	};
 
 	const Vertex vertices[] = {
-		{0.0f,0.5f},
-		{0.5f,-0.5f},
-		{-0.5f,-0.5f}
+		{0.0f,0.5f,255,0,0,0},
+		{0.5f,-0.5f,0,255,0,0},
+		{-0.5f,-0.5f,0,0,255,0},
 	};
 
 	//パイプラインに頂点情報をバインドする
@@ -146,7 +147,8 @@ void Graphics::DrawTriangle()
 	//input layout
 	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
 	const D3D11_INPUT_ELEMENT_DESC ied[] = {
-		{"POSITION",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0}
+		{"POSITION",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"COLOR",0,DXGI_FORMAT_R8G8B8A8_UNORM,0,8u,D3D11_INPUT_PER_VERTEX_DATA,0}
 	};
 	GFX_THROW_INFO(pDevice->CreateInputLayout(
 		ied, std::size(ied),
@@ -162,6 +164,7 @@ void Graphics::DrawTriangle()
 	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
 
 	//set primitive topology to triangle list (groups of 3 vertices)
+	//pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//create viewport
