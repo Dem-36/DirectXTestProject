@@ -4,6 +4,7 @@
 #include"WinInc.h"
 #include<d3d11.h>
 #include<wrl.h>
+#include"DxgiInfoManager.h"
 
 //DirectX11の処理を行う
 class Graphics
@@ -16,7 +17,13 @@ public:
 	void EndFrame();
 	//画面クリア
 	void ClearBuffer(float red, float green, float blue)noexcept;
+
+	void DrawTriangle();
+
 private:
+#ifndef NODEBUG
+	DxgiInfoManager infoManager;
+#endif
 	//DirectX11の基礎的要素
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice = nullptr;
 	//バッファ切り替え

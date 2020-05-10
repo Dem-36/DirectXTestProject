@@ -13,8 +13,14 @@ public:
 	virtual const char* GetType()const noexcept;
 	static std::string TranslateErrorCode(HRESULT hr)noexcept;
 	HRESULT GetErrorCode()const noexcept;
-	std::string GetErrorString()const noexcept;
+	std::string GetErrorDescription()const noexcept;
 private:
 	HRESULT hr;
+};
+
+class NoGfxException :public WindowException {
+public:
+	NoGfxException(int line ,const char* file, HRESULT hr)noexcept;
+	const char* GetType()const noexcept override;
 };
 #endif

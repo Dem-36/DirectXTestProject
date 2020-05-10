@@ -15,7 +15,7 @@ const char* WindowException::what() const noexcept
 	std::ostringstream oss;
 	oss << GetType() << std::endl
 		<< "[Error Code] " << GetErrorCode() << std::endl
-		<< "[Description] " << GetErrorString() << std::endl
+		<< "[Description] " << GetErrorDescription() << std::endl
 		<< GetOriginString();
 	whatBuffer = oss.str();
 	return whatBuffer.c_str();
@@ -50,7 +50,17 @@ HRESULT WindowException::GetErrorCode() const noexcept
 	return hr;
 }
 
-std::string WindowException::GetErrorString() const noexcept
+std::string WindowException::GetErrorDescription() const noexcept
 {
 	return TranslateErrorCode(hr);
+}
+
+NoGfxException::NoGfxException(int line, const char* file, HRESULT hr) noexcept
+	:WindowException(line,file,hr)
+{
+}
+
+const char* NoGfxException::GetType() const noexcept
+{
+	return "DirectX11 Window Exception [No Graphics]";
 }
