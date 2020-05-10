@@ -88,17 +88,24 @@ void Graphics::DrawTriangle()
 
 	//頂点情報構造体
 	struct Vertex {
-		float x;
-		float y;
-		unsigned char r, g, b, a;
+		struct {
+			float x, y;
+		}position;
+		struct {
+			unsigned char r, g, b, a;
+		}color;
 	};
 
-	const Vertex vertices[] = {
-		{0.0f,0.5f,255,0,0,0},
-		{0.5f,-0.5f,0,255,0,0},
-		{-0.5f,-0.5f,0,0,255,0},
+	Vertex vertices[] = {
+	   {0.0f,0.5f,255,0,0,0},
+	   {0.5f,-0.5f,0,255,0,0},
+	   {-0.5f,-0.5f,0,0,255,0},
+	   {-0.3f,0.3f,0,255,0,0},
+	   {0.3f,0.3f,0,255,0,0},
+	   {0.0f,-0.8f,255,0,0,0},
 	};
 
+	vertices[0].color.g = 255;
 	//パイプラインに頂点情報をバインドする
 	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
 	D3D11_BUFFER_DESC bd = {};
@@ -116,6 +123,31 @@ void Graphics::DrawTriangle()
 	const UINT stride = sizeof(Vertex);
 	const UINT offset = 0u;
 	pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
+
+
+	//create index buffer
+	const unsigned short indices[] = {
+		0,1,2,
+		0,2,3,
+		0,4,1,
+		2,1,5,
+	};
+
+	//create index buffer
+	wrl::ComPtr<ID3D11Buffer> pIndexBuffer;
+	D3D11_BUFFER_DESC ibd = {};
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.Usage = D3D11_USAGE_DEFAULT;
+	ibd.CPUAccessFlags = 0u;
+	ibd.MiscFlags = 0u;
+	ibd.ByteWidth = sizeof(indices);
+	ibd.StructureByteStride = sizeof(unsigned short);
+	D3D11_SUBRESOURCE_DATA iInitData = {};
+	iInitData.pSysMem = indices;
+	GFX_THROW_INFO(pDevice->CreateBuffer(&ibd, &iInitData, &pIndexBuffer));
+
+	//bind index buffer
+	pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
 
 	//create pixel shader
 	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
@@ -168,6 +200,9 @@ void Graphics::DrawTriangle()
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//create viewport
+	//スクリーンの大きさと同じにする
+	//これは描画領域のようなもの(widthmheight)
+	//TopLeftX,TopLeftYは描画領域の始まり(現状は左上)
 	D3D11_VIEWPORT vp;
 	vp.Width = 800;
 	vp.Height = 600;
@@ -177,5 +212,5 @@ void Graphics::DrawTriangle()
 	vp.TopLeftY = 0;
 	pContext->RSSetViewports(1u, &vp);
 
-	GFX_THROW_INFO_ONLY(pContext->Draw((UINT)std::size(vertices), 0u));
+	GFX_THROW_INFO_ONLY(pContext->DrawIndexed((UINT)std::size(indices),0u, 0u));
 }
