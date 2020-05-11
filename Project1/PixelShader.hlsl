@@ -1,10 +1,9 @@
-struct v2f
+cbuffer CBuf
 {
-    float4 position : SV_Position;
-    float3 color : COLOR;
+    float4 face_colors[6];
 };
 
-float4 main(v2f i) : SV_TARGET
+float4 main(uint tid : SV_PrimitiveID) : SV_TARGET
 {
-    return float4(i.color, 1.0f);
+    return face_colors[tid / 2];
 }
