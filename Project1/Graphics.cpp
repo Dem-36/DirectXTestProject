@@ -62,6 +62,41 @@ Graphics::Graphics(HWND hWnd)
 		nullptr,
 		&pTarget
 		));
+
+	//Depth Buffer
+	//深度テストを行う深度ステンシルステートの作成
+	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+	dsDesc.DepthEnable = TRUE; //深度テストを有効にする
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;//深度ステンシルバッファの書き込みをオンにする
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;//深度データの比較
+	wrl::ComPtr<ID3D11DepthStencilState> pDSState;
+	GFX_THROW_INFO(pDevice->CreateDepthStencilState(&dsDesc, &pDSState));
+
+	//bind depth state
+	pContext->OMSetDepthStencilState(pDSState.Get(), 1u);
+
+	//深度ステンシルバッファの作成
+	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
+	D3D11_TEXTURE2D_DESC descDepth = {};
+	descDepth.Width = 800u;      //デプステクスチャの幅
+	descDepth.Height = 600u;     //デプステクスチャの高さ
+	descDepth.MipLevels = 1u;
+	descDepth.ArraySize = 1u;
+	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+	descDepth.SampleDesc.Count = 1u;
+	descDepth.SampleDesc.Quality = 0u;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	GFX_THROW_INFO(pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
+
+	//create view of depth stencil texture
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
+	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice = 0u;
+	GFX_THROW_INFO(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &descDSV,&pDSV));
+	//bind depth stencil view to OM
+	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
 }
 
 //描画処理
@@ -83,6 +118,7 @@ void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 {
 	const float color[] = { red,green,blue,1.0f };
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
+	pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
 void Graphics::DrawTriangle(float angle, float x, float y)
@@ -174,7 +210,7 @@ void Graphics::DrawTriangle(float angle, float x, float y)
 			dx::XMMatrixTranspose(
 			dx::XMMatrixRotationZ(angle) *
 				dx::XMMatrixRotationX(angle) *
-				dx::XMMatrixTranslation(x,y,4.0f) *
+				dx::XMMatrixTranslation(x,0.0f,y + 4.0f) *
 				dx::XMMatrixPerspectiveLH(1.0f,3.0f / 4.0f,0.5f,10.0f))
 		}
 	};
@@ -270,9 +306,6 @@ void Graphics::DrawTriangle(float angle, float x, float y)
 
 	//bind vertex layout
 	pContext->IASetInputLayout(pInputLayout.Get());
-
-	//bind render target
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
 
 	//set primitive topology to triangle list (groups of 3 vertices)
 	//pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);

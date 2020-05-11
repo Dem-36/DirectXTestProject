@@ -31,6 +31,7 @@ private:
 	//•`‰æˆ—
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV = nullptr;
 };
 
 #endif
