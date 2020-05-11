@@ -1,6 +1,7 @@
 #include "Graphics.h"
 #include"WinExceptionMacro.h"
 #include<d3dcompiler.h>
+#include<cmath>
 
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
@@ -82,7 +83,7 @@ void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
 }
 
-void Graphics::DrawTriangle()
+void Graphics::DrawTriangle(float angle)
 {
 	HRESULT hr;
 
@@ -102,7 +103,7 @@ void Graphics::DrawTriangle()
 	   {-0.5f,-0.5f,0,0,255,0},
 	   {-0.3f,0.3f,0,255,0,0},
 	   {0.3f,0.3f,0,255,0,0},
-	   {0.0f,-0.8f,255,0,0,0},
+	   {0.0f,-1.0f,255,0,0,0},
 	};
 
 	vertices[0].color.g = 255;
@@ -148,6 +149,41 @@ void Graphics::DrawTriangle()
 
 	//bind index buffer
 	pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
+
+	//create constant buffer for transformation matrix
+	struct ConstantBuffer {
+		//4×4行列
+		struct {
+			float element[4][4];
+		}transformation;
+	};
+
+	//Z軸回転行列(シェーダーに渡すときに転置行列にしないといけない Transpose)
+	const ConstantBuffer cb = {
+		{
+			(3.0f / 4.0f) * std::cos(angle),std::sin(angle),0.0f,0.0f,
+			(3.0f / 4.0f) * -std::sin(angle),std::cos(angle),0.0f,0.0f,
+			0.0f,0.0f,1.0f,0.0f,
+			0.0f,0.0f,0.0f,1.0f
+		}
+	};
+
+	wrl::ComPtr<ID3D11Buffer> pConstantBuffer;
+	D3D11_BUFFER_DESC cbd;
+	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	//定数を指定する場合、DYNAMICを選ぶ？(動的バッファ)
+	//使用する場合、CPUAccessFlagsを変更する
+	cbd.Usage = D3D11_USAGE_DYNAMIC;
+	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cbd.MiscFlags = 0u;
+	cbd.ByteWidth = sizeof(cb);
+	cbd.StructureByteStride = 0u;//定数バッファが配列でないので構造バイトは0
+	D3D11_SUBRESOURCE_DATA csb = {};
+	csb.pSysMem = &cb;
+	GFX_THROW_INFO(pDevice->CreateBuffer(&cbd, &csb, &pConstantBuffer));
+
+	//bind constnat buffer
+	pContext->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
 
 	//create pixel shader
 	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
@@ -212,5 +248,5 @@ void Graphics::DrawTriangle()
 	vp.TopLeftY = 0;
 	pContext->RSSetViewports(1u, &vp);
 
-	GFX_THROW_INFO_ONLY(pContext->DrawIndexed((UINT)std::size(indices),0u, 0u));
+	GFX_THROW_INFO_ONLY(pContext->DrawIndexed((UINT)std::size(indices), 0u, 0u));
 }
