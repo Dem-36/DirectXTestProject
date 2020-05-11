@@ -1,7 +1,7 @@
 //ConstantBuffer
 cbuffer CBuffer
 {
-   row_major matrix transform; //4×4行列 row_major CPU側で転置行列に変換する？
+   matrix transform; //4×4行列 row_major CPU側で転置行列に変換する？
 };
 
 struct appdata

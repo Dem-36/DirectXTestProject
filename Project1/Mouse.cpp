@@ -16,7 +16,7 @@ int Mouse::GetX() const noexcept
 //現在のマウスの位置のY座標を返す
 int Mouse::GetY() const noexcept
 {
-	return 0;
+	return y;
 }
 
 //マウスがウィンドウ内にあるかどうか

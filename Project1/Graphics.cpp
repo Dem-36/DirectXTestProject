@@ -2,11 +2,13 @@
 #include"WinExceptionMacro.h"
 #include<d3dcompiler.h>
 #include<cmath>
+#include<DirectXMath.h>
 
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
 
 namespace wrl = Microsoft::WRL;
+namespace dx = DirectX;
 
 Graphics::Graphics(HWND hWnd)
 {
@@ -83,8 +85,12 @@ void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
 }
 
-void Graphics::DrawTriangle(float angle)
+void Graphics::DrawTriangle(float angle,float x,float y)
 {
+	dx::XMVECTOR v = dx::XMVectorSet(3.0f, 3.0f, 0.0f, 0.0f);
+	//ƒxƒNƒgƒ‹‚Æs—ñ‚ÌŠ|‚¯Z
+	auto result = dx::XMVector3Transform(v,dx::XMMatrixScaling(1.5f,0.0f,0.0f));
+	auto xx = dx::XMVectorGetX(result);
 	HRESULT hr;
 
 	//’¸“_î•ñ\‘¢‘Ì
@@ -152,19 +158,29 @@ void Graphics::DrawTriangle(float angle)
 
 	//create constant buffer for transformation matrix
 	struct ConstantBuffer {
-		//4~4s—ñ
-		struct {
-			float element[4][4];
-		}transformation;
+		dx::XMMATRIX transform;
 	};
 
 	//Z²‰ñ“]s—ñ(ƒVƒF[ƒ_[‚É“n‚·‚Æ‚«‚É“]’us—ñ‚É‚µ‚È‚¢‚Æ‚¢‚¯‚È‚¢ Transpose)
 	const ConstantBuffer cb = {
 		{
-			(3.0f / 4.0f) * std::cos(angle),std::sin(angle),0.0f,0.0f,
-			(3.0f / 4.0f) * -std::sin(angle),std::cos(angle),0.0f,0.0f,
-			0.0f,0.0f,1.0f,0.0f,
-			0.0f,0.0f,0.0f,1.0f
+			//s—ñ“¯m‚ÌŠ|‚¯Z‚ğs‚¤(‰ñ“]s—ñ * Šg‘åk¬s—ñ)
+			//dx::XMMatrixMultiply(
+			//dx::XMMatrixRotationZ(angle),
+			//	dx::XMMatrixScaling(3.0f / 4.0f,1.0f,1.0f))
+
+			//’Êí‚ÌŠ|‚¯Z‚às‚¦‚é
+			//dx::XMMatrixTranspose(
+			//dx::XMMatrixRotationZ(angle) * 
+			//	dx::XMMatrixScaling(3.0f / 4.0f,1.0f,1.0f))
+
+			//‰ñ“]AŠg‘åk¬AˆÚ“®
+			dx::XMMatrixTranspose(
+			dx::XMMatrixRotationZ(angle)*
+				dx::XMMatrixScaling(3.0f / 4.0f,1.0f,1.0f) *
+				dx::XMMatrixTranslation(x,y,0.0f))
+
+
 		}
 	};
 
