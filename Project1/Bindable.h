@@ -3,7 +3,7 @@
 
 #include"Graphics.h"
 
-//インターフェース
+//バインド基底クラス
 class Bindable {
 public:
 	//パイプラインにバインドをする

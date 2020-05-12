@@ -6,6 +6,8 @@
 
 class VertexBuffer :public Bindable {
 public:
+	//頂点情報は各オブジェクトで違うので
+	//テンプレートとして受け取る 直でもらわずにアドレスを受け取る
 	template<typename T>
 	VertexBuffer(Graphics& gfx, const std::vector<T>& vertices)
 		:stride(sizeof(T)) {

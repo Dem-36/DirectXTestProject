@@ -4,6 +4,8 @@
 #include"Bindable.h"
 #include"WinExceptionMacro.h"
 
+//定数バッファ(渡す値が違う場合あるためテンプレート)
+//定数バッファ(渡す値が違う場合あるためテンプレート)
 template<typename T>
 class ConstantBuffer :public Bindable {
 public:
@@ -11,7 +13,9 @@ public:
 	void Update(Graphics& gfx, const T& consts) {
 		INFOMAN(gfx);
 
+		//Mapでリソースのデータを取得する構造体
 		D3D11_MAPPED_SUBRESOURCE msr;
+		//Mapを使用してバッファにアクセスする
 		GFX_THROW_INFO(GetContext(gfx)->Map(
 			pConstantBuffer.Get(),
 			0u,

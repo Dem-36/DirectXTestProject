@@ -83,8 +83,9 @@ Window::Window(int width, int height, const char* name)
 
 	//ウィンドウの表示
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
-	keyboard = new Keyboard();
-	mouse = new Mouse;
+
+	keyboard = std::make_unique<Keyboard>();
+	mouse = std::make_unique<Mouse>();
 
 	//create graphics object
 	pGfx = std::make_unique<Graphics>(hWnd);
@@ -106,19 +107,20 @@ void Window::SetTitle(const std::string& title)
 //解放処理
 void Window::Release()
 {
-	delete keyboard;
-	delete mouse;
+	pGfx.reset();
+	keyboard.reset();
+	mouse.reset();
 }
 
 //外部でキーボード判定を取得
 Keyboard* Window::GetKeyboard()
 {
-	return keyboard;
+	return keyboard.get();
 }
 
 Mouse* Window::GetMouse()
 {
-	return mouse;
+	return mouse.get();
 }
 
 std::optional<int> Window::ProcessMessage()

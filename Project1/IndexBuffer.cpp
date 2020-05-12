@@ -27,6 +27,7 @@ void IndexBuffer::Bind(Graphics& gfx) noexcept
 	GetContext(gfx)->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
 }
 
+//g—p‚·‚é’¸“_”‚ğ•Ô‚·
 UINT IndexBuffer::GetCount() const noexcept
 {
 	return count;

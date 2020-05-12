@@ -89,6 +89,7 @@ void Box::Update(float dt) noexcept
 	chi += dchi * dt;
 }
 
+//ƒ‚ƒfƒ‹s—ñ‚ğ•Ô‚·
 DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 {
 	return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *

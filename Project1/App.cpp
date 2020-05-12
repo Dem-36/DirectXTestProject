@@ -10,7 +10,7 @@ App::App()
 	std::uniform_real_distribution<float> ddist(0.0f, 3.1415f * 2.0f);
 	std::uniform_real_distribution<float> odist(0.0f, 3.1415f * 0.3f);
 	std::uniform_real_distribution<float> rdist(6.0f, 20.0f);
-	for (auto i = 0; i < 80; i++) {
+	for (auto i = 0; i < 100; i++) {
 		boxes.push_back(std::make_unique<Box>(wnd.Gfx(), rng, adist, ddist, odist, rdist));
 	}
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 60.0f));
@@ -23,6 +23,7 @@ int App::Go()
 		//新しいメッセージをブロックしません
 		if (const auto ecode = Window::ProcessMessage()) {
 			//optionalに値がある場合は終了しているので終了コードを返す
+			wnd.Release();
 			return *ecode;
 		}
 		DoFrame();
@@ -41,15 +42,4 @@ void App::DoFrame()
 		b->Draw(wnd.Gfx());
 	}
 	wnd.Gfx().EndFrame();
-	//const float c = (float)sin(timer.Peek()) / 2.0f + 0.5f;
-	//wnd.Gfx().ClearBuffer(c, c, 1.0f);
-	////Peek = 保存している最初の時間から現在時間を引く(Markで更新)
-	//wnd.Gfx().DrawTriangle(-timer.Peek(),
-	//	0,
-	//	0);
-	//wnd.Gfx().DrawTriangle(timer.Peek(),
-	//	wnd.GetMouse()->GetX() / 400.0f - 1.0f,
-	//	-wnd.GetMouse()->GetY() / 300.0f + 1.0f);
-
-	//wnd.Gfx().EndFrame();
 }

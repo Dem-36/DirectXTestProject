@@ -28,7 +28,6 @@ public:
 	//‰æ–ÊƒNƒŠƒA
 	void ClearBuffer(float red, float green, float blue)noexcept;
 	void DrawIndexed(UINT count);
-	void DrawTriangle(float angle,float x,float y);
 
 private:
 	DirectX::XMMATRIX projection;

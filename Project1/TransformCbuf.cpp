@@ -5,6 +5,8 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent)
 {
 }
 
+//頂点定数バッファを更新後、
+//それを描画パイプラインにバインドする(TransformCbuf事態は別にバインドを行わない)
 void TransformCbuf::Bind(Graphics& gfx) noexcept
 {
 	vcbuf.Update(gfx,

@@ -4,6 +4,8 @@
 #include"WindowException.h"
 #include"GraphicsException.h"
 
+//NDEBUG = Debugモードでないとき(Releaseだと宣言される)
+
 //プリプロセッサが__LINE__を行番号の整数に変換する
 //プリプロセッサが__FILE__をPGMのファイル名
 #define WIN_EXCEPT(hr) WindowException(__LINE__,__FILE__,hr)
@@ -26,11 +28,11 @@
 #define GFX_THROW_INFO_ONLY(call) (call)
 #endif
 
-// macro for importing infomanager into local scope
-// this.GetInfoManager(Graphics& gfx) must exist
+//Debugではないとき
 #ifdef NDEBUG
 #define INFOMAN(gfx) HRESULT hr
 #else
+//HRESULTとDxgiInfoManagerを作成する
 #define INFOMAN(gfx) HRESULT hr; DxgiInfoManager& infoManager = GetInfoManager((gfx))
 #endif
 

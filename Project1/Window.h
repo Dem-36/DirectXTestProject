@@ -47,8 +47,9 @@ private:
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept;
 private:
-	Keyboard* keyboard;
-	Mouse* mouse;
+	//èäóLå†ÇÕóBàÍ
+	std::unique_ptr<Keyboard> keyboard;
+	std::unique_ptr<Mouse> mouse;
 	int width;
 	int height;
 	HWND hWnd;

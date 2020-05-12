@@ -15,9 +15,9 @@ public:
 private:
 	//positional
 	float r;
-	float roll = 0.0f;
-	float pitch = 0.0f;
-	float yaw = 0.0f;
+	float roll = 0.0f;   //x
+	float pitch = 0.0f;  //y
+	float yaw = 0.0f;    //z
 	float theta;
 	float phi;
 	float chi;

@@ -14,6 +14,7 @@ public:
 	UINT GetCount()const noexcept;
 protected:
 	UINT count;
+	//インデックスバッファ
 	Microsoft::WRL::ComPtr<ID3D11Buffer>pIndexBuffer = nullptr;
 };
 
