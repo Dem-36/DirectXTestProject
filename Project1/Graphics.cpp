@@ -1,11 +1,6 @@
 #include "Graphics.h"
 #include"WinExceptionMacro.h"
-#include<d3dcompiler.h>
 #include<cmath>
-#include<DirectXMath.h>
-
-#pragma comment(lib,"d3d11.lib")
-#pragma comment(lib,"D3DCompiler.lib")
 
 namespace wrl = Microsoft::WRL;
 namespace dx = DirectX;
@@ -97,6 +92,34 @@ Graphics::Graphics(HWND hWnd)
 	GFX_THROW_INFO(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &descDSV,&pDSV));
 	//bind depth stencil view to OM
 	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
+
+	SetViewport();
+}
+
+void Graphics::SetViewport()
+{
+	//create viewport
+	//ƒXƒNƒŠ[ƒ“‚Ì‘å‚«‚³‚Æ“¯‚¶‚É‚·‚é
+	//‚±‚ê‚Í•`‰æ—Ìˆæ‚Ì‚æ‚¤‚È‚à‚Ì(widthmheight)
+	//TopLeftX,TopLeftY‚Í•`‰æ—Ìˆæ‚ÌŽn‚Ü‚è(Œ»ó‚Í¶ã)
+	D3D11_VIEWPORT vp;
+	vp.Width = 800;
+	vp.Height = 600;
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	pContext->RSSetViewports(1u, &vp);
+}
+
+void Graphics::SetProjection(DirectX::FXMMATRIX proj) noexcept
+{
+	projection = proj;
+}
+
+DirectX::XMMATRIX Graphics::GetProjection() const noexcept
+{
+	return projection;
 }
 
 //•`‰æˆ—
@@ -119,6 +142,11 @@ void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 	const float color[] = { red,green,blue,1.0f };
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
 	pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+}
+
+void Graphics::DrawIndexed(UINT count) 
+{
+	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
 }
 
 void Graphics::DrawTriangle(float angle, float x, float y)
@@ -310,19 +338,6 @@ void Graphics::DrawTriangle(float angle, float x, float y)
 	//set primitive topology to triangle list (groups of 3 vertices)
 	//pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	//create viewport
-	//ƒXƒNƒŠ[ƒ“‚Ì‘å‚«‚³‚Æ“¯‚¶‚É‚·‚é
-	//‚±‚ê‚Í•`‰æ—Ìˆæ‚Ì‚æ‚¤‚È‚à‚Ì(widthmheight)
-	//TopLeftX,TopLeftY‚Í•`‰æ—Ìˆæ‚ÌŽn‚Ü‚è(Œ»ó‚Í¶ã)
-	D3D11_VIEWPORT vp;
-	vp.Width = 800;
-	vp.Height = 600;
-	vp.MinDepth = 0;
-	vp.MaxDepth = 1;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	pContext->RSSetViewports(1u, &vp);
 
 	GFX_THROW_INFO_ONLY(pContext->DrawIndexed((UINT)std::size(indices), 0u, 0u));
 }
