@@ -6,7 +6,12 @@
 
 void Drawable::Draw(Graphics& gfx) const noexcept
 {
+	//各オブジェクトでバインドするもの
 	for (auto& b : binds) {
+		b->Bind(gfx);
+	}
+	//オブジェクトごとに共通でバインドするもの
+	for (auto& b : GetStaticBinds()) {
 		b->Bind(gfx);
 	}
 	gfx.DrawIndexed(pIndexBuffer->GetCount());

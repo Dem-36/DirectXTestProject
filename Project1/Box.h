@@ -1,8 +1,10 @@
 #ifndef _BOX_H_
 #define _BOX_H_
-#include"Drawable.h"
+
+#include"DrawableBase.h"
 #include<random>
-class Box:public Drawable
+
+class Box :public DrawableBase<Box>
 {
 public:
 	Box(Graphics& gfx, std::mt19937& rng,

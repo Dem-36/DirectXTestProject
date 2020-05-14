@@ -11,7 +11,8 @@ public:
 	TransformCbuf(Graphics& gfx, const Drawable& parent);
 	void Bind(Graphics& gfx)noexcept override;
 private:
-	VertexConstantBuffer<DirectX::XMMATRIX> vcbuf;
+	//BoxŠÔ‚Å‹¤’Ê‚ÌTransform‚ğ‚Â(•`‰æ‚É’l‚ğ•ÏX‚µ‚Ä‚¢‚é‚Ì‚Å“®‚«‚É‰e‹¿‚Í‚È‚¢)
+	static std::unique_ptr<VertexConstantBuffer<DirectX::XMMATRIX>> vcbuf;
 	const Drawable& parent;
 };
 

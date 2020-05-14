@@ -18,64 +18,72 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	dphi(odist(rng)), dtheta(odist(rng)), dchi(odist(rng)), chi(adist(rng)),
 	theta(adist(rng)), phi(adist(rng))
 {
-	struct Vertex {
-		struct {
-			float x, y, z;
-		}position;
-	};
-	const std::vector<Vertex> vertices = {
-		{-1.0f,-1.0f,-1.0f},
-		{1.0f,-1.0f,-1.0f},
-		{-1.0f,1.0f,-1.0f},
-		{1.0f,1.0f,-1.0f},
-		{-1.0f,-1.0f,1.0f},
-		{1.0f,-1.0f,1.0f},
-		{-1.0f,1.0f,1.0f},
-		{1.0f,1.0f,1.0f},
-	};
-	//頂点バッファの作成
-	AddBind(std::make_unique<VertexBuffer>(gfx, vertices));
+	//もしBoxの情報がバインドされていないなら
+	if (!IsStaticInitialized()) {
+		struct Vertex {
+			struct {
+				float x, y, z;
+			}position;
+		};
+		const std::vector<Vertex> vertices = {
+			{-1.0f,-1.0f,-1.0f},
+			{1.0f,-1.0f,-1.0f},
+			{-1.0f,1.0f,-1.0f},
+			{1.0f,1.0f,-1.0f},
+			{-1.0f,-1.0f,1.0f},
+			{1.0f,-1.0f,1.0f},
+			{-1.0f,1.0f,1.0f},
+			{1.0f,1.0f,1.0f},
+		};
+		//頂点バッファの作成
+		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
 
-	auto pvs = std::make_unique<VertexShader>(gfx, L"VertexShader.cso");
-	auto pvsbc = pvs->GetByteCode();
-	AddBind(std::move(pvs));
+		auto pvs = std::make_unique<VertexShader>(gfx, L"VertexShader.cso");
+		auto pvsbc = pvs->GetByteCode();
+		AddStaticBind(std::move(pvs));
 
-	AddBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
+		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
 
-	const std::vector<unsigned short> indices = {
-		0,2,1, 2,3,1,
-		1,3,5, 3,7,5,
-		2,6,3, 3,6,7,
-		4,5,7, 4,7,6,
-		0,4,2, 2,4,6,
-		0,1,4, 1,5,4
-	};
+		const std::vector<unsigned short> indices = {
+			0,2,1, 2,3,1,
+			1,3,5, 3,7,5,
+			2,6,3, 3,6,7,
+			4,5,7, 4,7,6,
+			0,4,2, 2,4,6,
+			0,1,4, 1,5,4
+		};
 
-	AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
+		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
 
-	struct ConstantBuffer2 {
-		struct {
-			float r, g, b, a;
-		}face_colors[6];
-	};
+		struct ConstantBuffer2 {
+			struct {
+				float r, g, b, a;
+			}face_colors[6];
+		};
 
-	const ConstantBuffer2 cb2 = {
-		{
-			{1.0f,0.0f,1.0f},
-			{1.0f,0.0f,0.0f},
-			{0.0f,1.0f,0.0f},
-			{0.0f,0.0f,1.0f},
-			{1.0f,1.0f,0.0f},
-			{0.0f,1.0f,1.0f},
-		}
-	};
-	AddBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
+		const ConstantBuffer2 cb2 = {
+			{
+				{1.0f,0.0f,1.0f},
+				{1.0f,0.0f,0.0f},
+				{0.0f,1.0f,0.0f},
+				{0.0f,0.0f,1.0f},
+				{1.0f,1.0f,0.0f},
+				{0.0f,1.0f,1.0f},
+			}
+		};
+		AddStaticBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
 
-	const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
-		{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
-	};
-	AddBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
-	AddBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
+			{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+		};
+		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+	}
+	else {
+		SetIndexFromStatic();
+	}
+
+	//すべてのBoxに個別の情報があるため
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 }
 
