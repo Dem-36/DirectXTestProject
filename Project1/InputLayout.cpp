@@ -7,6 +7,7 @@ InputLayout::InputLayout(Graphics& gfx,
 {
 	INFOMAN(gfx);
 
+	//頂点シェーダーに渡す入力情報を作成
 	GFX_THROW_INFO(GetDevice(gfx)->CreateInputLayout(
 		layout.data(), (UINT)layout.size(),
 		pVertexShaderByteCode->GetBufferPointer(),

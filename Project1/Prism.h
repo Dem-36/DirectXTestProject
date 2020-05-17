@@ -7,6 +7,7 @@
 
 class Prism {
 public:
+	//longDiv‚Í’ê•Ó’¸“_”
 	template<class T>
 	static IndexedTriangleList<T> MakeTesselated(int longDiv) {
 		namespace dx = DirectX;

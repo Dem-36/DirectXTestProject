@@ -8,6 +8,7 @@
 //Sphereのジオメトリ
 class Sphere {
 public:
+	//latDivは円の縦の頂点数 longDivは円周の頂点数
 	template<typename T>
 	static IndexedTriangleList<T> MakeTesselated(int latDiv, int longDiv) {
 
@@ -91,7 +92,7 @@ public:
 		return { std::move(vertices),std::move(indices) };
 	}
 
-	//Sphereのジオメトリの作成
+	//Sphereのジオメトリの作成(引数固定)
 	template<class T>
 	static IndexedTriangleList<T> Make() {
 		return MakeTesselated<T>(12, 24);

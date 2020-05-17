@@ -8,16 +8,21 @@ class Bindable;
 
 class Drawable
 {
+	//DrawableBaseクラスはDrawableクラスのprivate関数を使える
 	template<class T>
 	friend class DrawableBase;
 public:
 	Drawable() = default;
 	Drawable(const Drawable&) = delete;
+	//モデル行列を返す
 	virtual DirectX::XMMATRIX GetTransformXM()const noexcept = 0;
+	//描画処理
 	void Draw(Graphics& gfx)const noexcept;
+	//定数バッファ更新
 	virtual void Update(float dt)noexcept = 0;
 	virtual ~Drawable() = default;
 protected:
+	//各オブジェクトのバインド
 	void AddBind(std::unique_ptr<Bindable> bind)noexcept;
 	void AddIndexBuffer(std::unique_ptr<class IndexBuffer> ibuf)noexcept;
 private:

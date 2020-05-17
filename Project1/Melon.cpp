@@ -27,6 +27,7 @@ Melon::Melon(Graphics& gfx,
 
 	if (!IsStaticInitialized())
 	{
+		//頂点シェーダー作成
 		auto pvs = std::make_unique<VertexShader>(gfx, L"ColorIndexVS.cso");
 		auto pvsbc = pvs->GetByteCode();
 		AddStaticBind(std::move(pvs));
@@ -71,9 +72,10 @@ Melon::Melon(Graphics& gfx,
 	{
 		dx::XMFLOAT3 position;
 	};
+	//ジオメトリを読み込みSphereを作成
 	auto model = Sphere::MakeTesselated<Vertex>(latdist(rng), longdist(rng));
-	// deform vertices of model by linear transformation
-	model.Transform(dx::XMMatrixScaling(1.0f, 1.0f, 1.2f));
+	// 作成したモデルのローカルの大きさを指定
+	model.Transform(dx::XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
 	AddBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
 

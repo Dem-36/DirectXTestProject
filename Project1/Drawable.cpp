@@ -14,6 +14,7 @@ void Drawable::Draw(Graphics& gfx) const noexcept
 	for (auto& b : GetStaticBinds()) {
 		b->Bind(gfx);
 	}
+	//•`‰æ
 	gfx.DrawIndexed(pIndexBuffer->GetCount());
 }
 

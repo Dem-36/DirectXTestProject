@@ -47,7 +47,8 @@ private:
 	static std::vector<std::unique_ptr<Bindable>> staticBinds;
 };
 
-//static変数の初期化をここでしている・・・？
+//static変数の初期化をここでしている
+//templateでstaticを扱う場合、ヘッダの外で初期化 
 template<class T>
 std::vector<std::unique_ptr<Bindable>> DrawableBase<T>::staticBinds;
 

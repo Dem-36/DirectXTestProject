@@ -4,11 +4,15 @@
 #include"Bindable.h"
 #include"WinExceptionMacro.h"
 
+//頂点シェーダー
 class VertexShader:public Bindable
 {
 public:
+	//コンストラクタ
 	VertexShader(Graphics& gfx, const std::wstring& path);
+	//パイプラインにバインドする
 	void Bind(Graphics& gfx)noexcept override;
+	//Blobを取得 InputLayoutで使用
 	ID3DBlob* GetByteCode()const noexcept;
 protected:
 	std::string path;

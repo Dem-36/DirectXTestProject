@@ -5,7 +5,6 @@
 #include"WinExceptionMacro.h"
 
 //定数バッファ(渡す値が違う場合あるためテンプレート)
-//定数バッファ(渡す値が違う場合あるためテンプレート)
 template<typename T>
 class ConstantBuffer :public Bindable {
 public:

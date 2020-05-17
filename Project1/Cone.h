@@ -5,15 +5,18 @@
 #include<DirectXMath.h>
 #include"WinMath.h"
 
+//Coneのジオメトリを作成
 class Cone {
 public:
+	//T = 頂点構造体
+	//Coneのジオメトリを作成するlongDivは三角錐の底辺頂点数
 	template<class T>
 	static IndexedTriangleList<T> MakeTesselated(int longDiv) {
 
 		namespace dx = DirectX;
 		assert(longDiv >= 3);
 
-		const auto base = dx::XMVectorSet(1.0f, 0.0f, - 1.0f, 0.0f);
+		const auto base = dx::XMVectorSet(1.0f, 0.0f, -1.0f, 0.0f);
 		const float longitudeAngle = 2.0f * PI / longDiv;
 
 		//base vertices
@@ -51,7 +54,7 @@ public:
 			indices.push_back(iTip);
 		}
 
-		return { std::move(vertices),std::move(indices) };
+		return IndexedTriangleList<T>(std::move(vertices), std::move(indices));
 	}
 
 	//Coneのジオメトリを作成

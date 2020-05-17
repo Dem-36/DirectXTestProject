@@ -13,6 +13,7 @@ public:
 	//頂点数を返す
 	UINT GetCount()const noexcept;
 protected:
+	//頂点数
 	UINT count;
 	//インデックスバッファ
 	Microsoft::WRL::ComPtr<ID3D11Buffer>pIndexBuffer = nullptr;

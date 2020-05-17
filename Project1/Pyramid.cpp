@@ -3,19 +3,20 @@
 #include"WinExceptionMacro.h"
 #include"Cone.h"
 
-Pyramid::Pyramid(Graphics& gfx, std::mt19937& rng, 
+Pyramid::Pyramid(Graphics& gfx, std::mt19937& rng,
 	std::uniform_real_distribution<float>& adist,
 	std::uniform_real_distribution<float>& ddist,
 	std::uniform_real_distribution<float>& odist,
 	std::uniform_real_distribution<float>& rdist)
-	:r(rdist(rng)),droll(ddist(rng)),dpitch(ddist(rng)),dyaw(ddist(rng)),
-	dphi(odist(rng)),dtheta(odist(rng)),dchi(odist(rng)),chi(adist(rng)),
-	theta(adist(rng)),phi(adist(rng))
+	:r(rdist(rng)), droll(ddist(rng)), dpitch(ddist(rng)), dyaw(ddist(rng)),
+	dphi(odist(rng)), dtheta(odist(rng)), dchi(odist(rng)), chi(adist(rng)),
+	theta(adist(rng)), phi(adist(rng))
 {
 	namespace dx = DirectX;
 
 	if (!IsStaticInitialized())
 	{
+		//頂点構造体
 		struct Vertex
 		{
 			dx::XMFLOAT3 position;
@@ -27,14 +28,19 @@ Pyramid::Pyramid(Graphics& gfx, std::mt19937& rng,
 				unsigned char a;
 			} color;
 		};
+
+		//三角錐の頂点数は底辺の頂点数 + 一番上 + 底辺の真ん中
 		auto model = Cone::MakeTesselated<Vertex>(4);
-		// set vertex colors for mesh
-		model.vertices[0].color = { 255,255,0 };
-		model.vertices[1].color = { 255,255,0 };
-		model.vertices[2].color = { 255,255,0 };
-		model.vertices[3].color = { 255,255,0 };
-		model.vertices[4].color = { 255,255,80 };
-		model.vertices[5].color = { 255,10,0 };
+		//色をランダムで指定する
+		std::uniform_int_distribution<int>coldistr{ 80,255 };
+		std::uniform_int_distribution<int>coldistg{ 80,255 };
+		std::uniform_int_distribution<int>coldistb{ 80,255 };
+		for (int i = 0; i < model.vertices.size(); i++) {
+			model.vertices[i].color = {
+				static_cast<unsigned char>(coldistr(rng)),
+				static_cast<unsigned char>(coldistg(rng)),
+				static_cast<unsigned char>(coldistb(rng)) };
+		}
 		// deform mesh linearly
 		model.Transform(dx::XMMatrixScaling(1.0f, 1.0f, 0.7f));
 
