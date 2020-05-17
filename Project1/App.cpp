@@ -7,7 +7,7 @@
 #include<memory>
 
 App::App()
-	:wnd(800, 600, "The Donkey Fart Box")
+	:wnd(800, 600, "Geometry Parade")
 {
 	class Factory {
 	public:

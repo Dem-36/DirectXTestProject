@@ -3,16 +3,22 @@ cbuffer CBuf
     matrix transform;
 };
 
+struct appdata
+{
+    float3 vertex : POSITION;
+    float4 color : COLOR;
+};
+
 struct VSOut
 {
     float4 position : SV_POSITION;
     float4 color : COLOR;
 };
 
-VSOut main(float3 position : POSITION, float4 color : COLOR)
+VSOut main(appdata v)
 {
     VSOut vso;
-    vso.position = mul(float4(position, 1.0f), transform);
-    vso.color = color;
+    vso.position = mul(float4(v.vertex, 1.0f), transform);
+    vso.color = v.color;
     return vso;
 }

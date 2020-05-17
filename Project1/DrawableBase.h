@@ -39,7 +39,7 @@ protected:
 
 private:
 	//Bindされているインターフェースのvectorを返す = Drawableの純粋仮想関数
-	const std::vector<std::unique_ptr<Bindable>>& GetStaticBinds()const noexcept {
+	const std::vector<std::unique_ptr<Bindable>>& GetStaticBinds()const noexcept override {
 		return staticBinds;
 	}
 
