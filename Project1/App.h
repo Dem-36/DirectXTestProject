@@ -17,6 +17,6 @@ private:
 	Window wnd;
 	Timer timer;
 	std::vector<std::unique_ptr<class Drawable>> drawables;
-	static constexpr size_t nDrawables = 180;
+	static constexpr size_t nDrawables = 300;
 };
 #endif

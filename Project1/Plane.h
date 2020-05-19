@@ -24,7 +24,7 @@ public:
 
 		{
 			const float side_x = width / 2.0f;
-			const float side_ = height / 2.0f;
+			const float side_y = height / 2.0f;
 			const float divisionSize_x = width / float(divisions_x);
 			const float divisionSize_y = height / float(divisions_y);
 			const auto bottomLeft = dx::XMVectorSet(-side_x, -side_y, 0.0f, 0.0f);

@@ -1,0 +1,24 @@
+cbuffer CBuf
+{
+    matrix transform;
+};
+
+struct appdata
+{
+    float3 vertex : POSITION;
+    float2 texcoord : TEXCOORD;
+};
+
+struct v2f
+{
+    float4 position : SV_POSITION;
+    float2 uv : TEXCOORD;
+};
+
+v2f main(appdata v)
+{
+    v2f o;
+    o.position = mul(float4(v.vertex, 1.0f), transform);
+    o.uv = v.texcoord;
+    return o;
+}

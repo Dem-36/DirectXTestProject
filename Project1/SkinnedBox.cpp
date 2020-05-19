@@ -1,0 +1,5 @@
+#include"SkinnedBox.h"
+#include"BindableBase.h"
+#include"WinExceptionMacro.h"
+#include"Cube.h"
+#include"Texture.h"
