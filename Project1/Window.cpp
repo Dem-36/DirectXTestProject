@@ -1,6 +1,7 @@
 #include "Window.h"
 #include<sstream>
 #include"resource.h"
+#include"imgui/imgui_impl_win32.h"
 
 //Window Class Stuff ここでWindowClass のコンストラクタが呼ばれる
 Window::WindowClass Window::WindowClass::wndClass;
@@ -84,6 +85,9 @@ Window::Window(int width, int height, const char* name)
 	//ウィンドウの表示
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 
+	//Init ImGui Win32 Impl
+	ImGui_ImplWin32_Init(hWnd);
+
 	keyboard = std::make_unique<Keyboard>();
 	mouse = std::make_unique<Mouse>();
 
@@ -92,6 +96,7 @@ Window::Window(int width, int height, const char* name)
 }
 
 Window::~Window() {
+	ImGui_ImplWin32_Shutdown();
 	//ウィンドウの破棄
 	DestroyWindow(hWnd);
 }
@@ -168,6 +173,10 @@ LRESULT WINAPI Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
 //プロシージャ
 LRESULT Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexcept {
+
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
+		return true;
+	}
 
 	switch (msg) {
 	case WM_CLOSE:

@@ -7,6 +7,8 @@
 #include<algorithm>
 #include<memory>
 
+#include"imgui/imgui.h"
+
 App::App()
 	:wnd(800, 600, "Geometry Parade")
 {
@@ -82,11 +84,27 @@ App::~App() {}
 //更新処理を行う
 void App::DoFrame()
 {
-	auto dt = timer.Mark();
-	wnd.Gfx().ClearBuffer(0.07f, 0.0f, 0.12f);
+	auto dt = timer.Mark() * speed_factor;
+	wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
 	for (auto& b : drawables) {
 		b->Update(dt);
 		b->Draw(wnd.Gfx());
 	}
+
+	static char buffer[1024];
+
+	if (ImGui::Begin("Simulation Speed")) {
+		ImGui::SliderFloat("Speed Factor", &speed_factor, 0.0f, 4.0f);
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 
+			1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::InputText("Butts", buffer, sizeof(buffer));
+	}
+	ImGui::End();
+
+	//デモウィンドウ作成
+	//if (wnd.Gfx().IsImguiEnabled) {
+	//	ImGui::ShowDemoWindow(&show_demo_window);
+	//}
+ 	//present
 	wnd.Gfx().EndFrame();
 }

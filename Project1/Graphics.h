@@ -24,13 +24,17 @@ public:
 	void SetViewport();
 	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
+	void BeginFrame(float red, float green, float blue)noexcept;
 	void EndFrame();
-	//‰æ–ÊƒNƒŠƒA
-	void ClearBuffer(float red, float green, float blue)noexcept;
 	void DrawIndexed(UINT count);
+	
+	void EnableImgui()noexcept;
+	void DisableImgui()noexcept;
+	bool IsImguiEnabled()const noexcept;
 
 private:
 	DirectX::XMMATRIX projection;
+	bool imguiEnabled = true;
 #ifndef NODEBUG
 	DxgiInfoManager infoManager;
 #endif
