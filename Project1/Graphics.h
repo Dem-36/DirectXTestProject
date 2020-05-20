@@ -28,12 +28,18 @@ public:
 	void EndFrame();
 	void DrawIndexed(UINT count);
 	
+	//ÉJÉÅÉâ
+	void SetCamera(DirectX::FXMMATRIX cam)noexcept;
+	DirectX::XMMATRIX GetCamera()const noexcept;
+
+	//Imgui
 	void EnableImgui()noexcept;
 	void DisableImgui()noexcept;
 	bool IsImguiEnabled()const noexcept;
 
 private:
 	DirectX::XMMATRIX projection;
+	DirectX::XMMATRIX camera;
 	bool imguiEnabled = true;
 #ifndef NODEBUG
 	DxgiInfoManager infoManager;

@@ -22,7 +22,9 @@ void TransformCbuf::Bind(Graphics& gfx) noexcept
 	//XMMatrixTransposeで転置行列にする
 	vcbuf->Update(gfx,
 		DirectX::XMMatrixTranspose(
-			parent.GetTransformXM() * gfx.GetProjection()
+			parent.GetTransformXM() *
+			gfx.GetCamera() *
+			gfx.GetProjection()
 			));
 	//定数バッファをパイプラインにバインド
 	vcbuf->Bind(gfx);

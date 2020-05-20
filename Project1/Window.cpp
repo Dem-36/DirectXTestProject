@@ -177,6 +177,7 @@ LRESULT Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexce
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
 		return true;
 	}
+	const auto imio = ImGui::GetIO();
 
 	switch (msg) {
 	case WM_CLOSE:
@@ -193,14 +194,23 @@ LRESULT Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexce
 	case WM_KEYDOWN:
 		//Altキーなどのシステムキーを追跡したいならWM_SYSKEYDOWNを指定する
 	case WM_SYSKEYDOWN:
+		if (imio.WantCaptureKeyboard) {
+			break;
+		}
 		if (!(lParam & 0x40000000) || keyboard->AutoRepeatIsEnabled())
 			keyboard->OnKeyPressed(static_cast<unsigned char>(wParam));
 		break;
 	case WM_KEYUP:
 	case WM_SYSKEYUP:
+		if (imio.WantCaptureKeyboard) {
+			break;
+		}
 		keyboard->OnKeyReleased(static_cast<unsigned char>(wParam));
 		break;
 	case WM_CHAR:
+		if (imio.WantCaptureKeyboard) {
+			break;
+		}
 		keyboard->OnChar(static_cast<unsigned char>(wParam));
 		break;
 		//キーボード処理 終了
@@ -210,6 +220,9 @@ LRESULT Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexce
 #pragma region Mouse
 
 	case WM_MOUSEMOVE: {
+		if (imio.WantCaptureMouse) {
+			break;
+		}
 		//lParamにマウス座標が記録されている
 		//MAKEPOINTSでPOINTS型の位置が取得できる
 		POINTS points = MAKEPOINTS(lParam);
@@ -240,26 +253,51 @@ LRESULT Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)noexce
 		}
 	}
 	case WM_LBUTTONDOWN: {
+		if (imio.WantCaptureMouse)
+		{
+			break;
+		}
+
 		POINTS points = MAKEPOINTS(lParam);
 		mouse->OnLeftPressed(points.x, points.y);
 		break;
 	}
 	case WM_RBUTTONDOWN: {
+		if (imio.WantCaptureMouse)
+		{
+			break;
+		}
+
 		POINTS points = MAKEPOINTS(lParam);
 		mouse->OnRightPressed(points.x, points.y);
 		break;
 	}
 	case WM_LBUTTONUP: {
+		if (imio.WantCaptureMouse)
+		{
+			break;
+		}
+
 		POINTS points = MAKEPOINTS(lParam);
 		mouse->OnLeftReleased(points.x, points.y);
 		break;
 	}
 	case WM_RBUTTONUP: {
+		if (imio.WantCaptureMouse)
+		{
+			break;
+		}
+
 		POINTS points = MAKEPOINTS(lParam);
 		mouse->OnRightReleased(points.x, points.y);
 		break;
 	}
 	case WM_MOUSEWHEEL: {
+		if (imio.WantCaptureMouse)
+		{
+			break;
+		}
+
 		POINTS points = MAKEPOINTS(lParam);
 		int delta = GET_WHEEL_DELTA_WPARAM(wParam);
 		mouse->OnWheelDelta(points.x, points.y, delta);

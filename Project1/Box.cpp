@@ -101,12 +101,10 @@ void Box::Update(float dt) noexcept
 DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 {
 	namespace dx = DirectX;
-	//XMLoadFloat3×3 = 3×3行列をXMMATRIXに変換する
+	//XMLoadFloat3×3 = 3×3行列をXMMATRIXに変換する mtはモデル行列
 	//XMMatrixRotationRollPitchYaw = 指定されたオイラー角に基づいて回転行列を作成
 	return dx::XMLoadFloat3x3(&mt) *
 		dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
 		dx::XMMatrixTranslation(r, 0.0f, 0.0f) *
-		dx::XMMatrixRotationRollPitchYaw(theta, phi, chi) *
-		dx::XMMatrixTranslation(0.0f, 0.0f, 20.0f);
-
+		dx::XMMatrixRotationRollPitchYaw(theta, phi, chi);
 }

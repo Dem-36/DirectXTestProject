@@ -9,6 +9,8 @@
 
 #include"imgui/imgui.h"
 
+namespace dx = DirectX;
+
 App::App()
 	:wnd(800, 600, "Geometry Parade")
 {
@@ -62,7 +64,9 @@ App::App()
 	drawables.reserve(nDrawables);
 	std::generate_n(std::back_inserter(drawables), nDrawables, Factory{ wnd.Gfx() });
 
-	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
+	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
+	wnd.Gfx().SetCamera(camera.GetMatrix());
+
 }
 
 int App::Go()
@@ -86,6 +90,7 @@ void App::DoFrame()
 {
 	auto dt = timer.Mark() * speed_factor;
 	wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
+	wnd.Gfx().SetCamera(camera.GetMatrix());
 	for (auto& b : drawables) {
 		b->Update(dt);
 		b->Draw(wnd.Gfx());
@@ -97,10 +102,10 @@ void App::DoFrame()
 		ImGui::SliderFloat("Speed Factor", &speed_factor, 0.0f, 4.0f);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 
 			1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::InputText("Butts", buffer, sizeof(buffer));
+		ImGui::Text("Status: %s", wnd.GetKeyboard()->KeyIsPressed(VK_SPACE));
 	}
 	ImGui::End();
-
+	camera.SpawnControlWindow();
 	//デモウィンドウ作成
 	//if (wnd.Gfx().IsImguiEnabled) {
 	//	ImGui::ShowDemoWindow(&show_demo_window);
