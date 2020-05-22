@@ -21,51 +21,31 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	if (!IsStaticInitialized()) {
 		struct Vertex {
 			dx::XMFLOAT3 position;
+			dx::XMFLOAT3 normal;
 		};
 
-		auto model = Cube::Make<Vertex>();
+		auto model = Cube::MakeIndependent<Vertex>();
+		model.SetNormalsIndependentFlat();
 
 		//頂点バッファの作成
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
 
 	    //頂点シェーダーを作成
-		auto pvs = std::make_unique<VertexShader>(gfx, L"ColorIndexVS.cso");
+		auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
 		//IndexBufferで使用するため、Blob情報を取得
 		auto pvsbc = pvs->GetByteCode();
 		AddStaticBind(std::move(pvs));
 
 		//ピクセルシェーダーを作成
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"ColorIndexPS.cso"));
+		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PhongPS.cso"));
 
 		//IndexBufferの登録(描画時に頂点数を入力するため別の方法で保存)
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
 
-		struct PixelShaderConstants {
-			struct {
-				float r, g, b, a;
-			}face_colors[8];
-		};
-
-		//ピクセルシェーダーに渡す定数バッファ作成
-		const PixelShaderConstants cb2 = {
-			{
-				{1.0f,1.0f,1.0f},
-				{1.0f,0.0f,0.0f},
-				{0.0f,1.0f,0.0f},
-				{1.0f,1.0f,0.0f},
-				{0.0f,0.0f,1.0f},
-				{1.0f,0.0f,1.0f},
-				{0.0f,1.0f,1.0f},
-				{0.0f,0.0f,0.0f},
- 			}
-		};
-
-		//ピクセルシェーダーの定数バッファ登録
-		AddStaticBind(std::make_unique<PixelConstantBuffer<PixelShaderConstants>>(gfx, cb2));
-
 		//頂点シェーダーに渡すセマンティクス情報を作成
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
 			{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+			{"NORMAL",0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0},
 		};
 		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
 		//プリミティブ指定

@@ -30,6 +30,29 @@ public:
 				);
 		}
 	}
+
+	//asserts face-indipendent vertices 1/ normals cleared to zero
+	//取得した頂点位置から法線を求める
+	void SetNormalsIndependentFlat()noexcept {
+		using namespace DirectX;
+		assert(indices.size() % 3 == 0 && indices.size() > 0);
+		for (size_t i = 0; i < indices.size(); i += 3) {
+			auto& v0 = vertices[indices[i]];
+			auto& v1 = vertices[indices[i + 1]];
+			auto& v2 = vertices[indices[i + 2]];
+			const auto p0 = XMLoadFloat3(&v0.position);
+			const auto p1 = XMLoadFloat3(&v1.position);
+			const auto p2 = XMLoadFloat3(&v2.position);
+
+			const auto n = XMVector3Normalize(XMVector3Cross((p1 - p0), (p2 - p0)));
+
+			//アドレスを取得しているため、indicesの中身が変更される
+			XMStoreFloat3(&v0.normal, n);
+			XMStoreFloat3(&v1.normal, n);
+			XMStoreFloat3(&v2.normal, n);
+		}
+	}
+
 public:
 	//ここに保存される頂点情報はモデル座標
 	std::vector<T> vertices;

@@ -47,5 +47,4 @@ void Camera::Reset() noexcept
 	pitch = 0.0f;
 	yaw = 0.0f;
 	roll = 0.0f;
-
 }
