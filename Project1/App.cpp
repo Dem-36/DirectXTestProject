@@ -23,35 +23,35 @@ App::App()
 		{}
 		std::unique_ptr<Drawable> operator()()
 		{
-			//return std::make_unique<Box>(
-			//	gfx, rng, adist, ddist,
-			//	odist, rdist, bdist
-			//	);
-			switch (typedist(rng))
-			{
-			case 0:
-				return std::make_unique<Pyramid>(
-					gfx, rng, adist, ddist,
-					odist, rdist
-					);
-			case 1:
-				return std::make_unique<Box>(
-					gfx, rng, adist, ddist,
-					odist, rdist, bdist
-					);
-			//case 2:
-			//	return std::make_unique<Melon>(
+			return std::make_unique<Box>(
+				gfx, rng, adist, ddist,
+				odist, rdist, bdist
+				);
+			//switch (typedist(rng))
+			//{
+			//case 0:
+			//	return std::make_unique<Pyramid>(
 			//		gfx, rng, adist, ddist,
-			//		odist, rdist, longdist, latdist
+			//		odist, rdist
 			//		);
-			case 2:
-				return std::make_unique<Sheet>(
-					gfx, rng, adist, ddist, odist, rdist
-					);
-			default:
-				assert(false && "bad drawable type in factory");
-				return {};
-			}
+			//case 1:
+			//	return std::make_unique<Box>(
+			//		gfx, rng, adist, ddist,
+			//		odist, rdist, bdist
+			//		);
+			////case 2:
+			////	return std::make_unique<Melon>(
+			////		gfx, rng, adist, ddist,
+			////		odist, rdist, longdist, latdist
+			////		);
+			//case 2:
+			//	return std::make_unique<Sheet>(
+			//		gfx, rng, adist, ddist, odist, rdist
+			//		);
+			//default:
+			//	assert(false && "bad drawable type in factory");
+			//	return {};
+			//}
 		}
 	private:
 		Graphics& gfx;

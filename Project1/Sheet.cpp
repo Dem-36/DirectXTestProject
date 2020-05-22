@@ -25,10 +25,6 @@ Sheet::Sheet(Graphics& gfx, std::mt19937& rng,
 		};
 
 		auto model = Plane::Make<Vertex>();
-		//model.vertices[0].uv = { 0.0f,0.0f };
-		//model.vertices[1].uv = { 1.0f,0.0f };
-		//model.vertices[2].uv = { 0.0f,1.0f };
-		//model.vertices[3].uv = { 1.0f,1.0f };
 
 		model.vertices[0].uv = { 0.0f,0.0f };
 		model.vertices[1].uv = { 1.0f,0.0f };

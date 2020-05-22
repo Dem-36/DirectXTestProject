@@ -15,11 +15,17 @@ public:
 	void Bind(Graphics& gfx)const noexcept;
 private:
 	struct PointLightCBuf {
-		DirectX::XMFLOAT3 position;
-		float padding;
+		alignas(16)	DirectX::XMFLOAT3 position;         //ライトの位置
+		alignas(16)	DirectX::XMFLOAT3 materialColor;    //マテリアル色
+		alignas(16)	DirectX::XMFLOAT3 ambient;          //
+		alignas(16)	DirectX::XMFLOAT3 diffuseColor;
+		float diffuseIntensity;
+		float attConst;
+		float attLin;
+		float attQuad;
 	};
 private:
-	DirectX::XMFLOAT3 position = { 0.0f,0.0f,0.0f };
+	PointLightCBuf cbData;
 	//ライト用コンスタントバッファ
 	mutable PixelConstantBuffer<PointLightCBuf> cbuf;
 	mutable SolidSphere mesh;
