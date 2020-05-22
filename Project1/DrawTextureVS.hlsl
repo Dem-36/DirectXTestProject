@@ -1,6 +1,7 @@
 cbuffer CBuf
 {
-    matrix transform;
+    matrix model;
+    matrix modelViewProjection;
 };
 
 struct appdata
@@ -18,7 +19,7 @@ struct v2f
 v2f main(appdata v)
 {
     v2f o;
-    o.position = mul(float4(v.vertex, 1.0f), transform);
+    o.position = mul(float4(v.vertex, 1.0f), modelViewProjection);
     o.uv = v.texcoord;
     return o;
 }

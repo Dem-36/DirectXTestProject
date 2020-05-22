@@ -27,6 +27,6 @@ float4 main(v2f i) : SV_TARGET
     const float att = 1.0f / (attConst + attLin * distToL + attQuad * (distToL * distToL));
     //diffuse intensity
     const float3 diffuse = diffuseColor * diffuseIntensity * att * max(0.0f, dot(dirToL, i.normal));
-    return float4(saturate(diffuse + ambient), 1.0f);
+    return float4(saturate(diffuse + ambient) * materialColor, 1.0f);
 
 }

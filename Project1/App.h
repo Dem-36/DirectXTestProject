@@ -22,7 +22,7 @@ private:
 	Timer timer;
 	std::vector<std::unique_ptr<class Drawable>> drawables;
 	float speed_factor = 1.0f;
-	static constexpr size_t nDrawables = 180;
+	static constexpr size_t nDrawables = 300;
 	Camera camera;
 	//‹^Ž—“I‚É‘¾—z‚ð•`‰æ‚·‚é
 	PointLight light;

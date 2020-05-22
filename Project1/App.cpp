@@ -1,9 +1,9 @@
 #include "App.h"
 #include"Box.h"
-//#include"Melon.h"
-//#include"Pyramid.h"
+#include"Melon.h"
+#include"Pyramid.h"
 #include"WinMath.h"
-//#include"Sheet.h"
+#include"Sheet.h"
 #include<algorithm>
 #include<memory>
 
@@ -23,35 +23,35 @@ App::App()
 		{}
 		std::unique_ptr<Drawable> operator()()
 		{
-			return std::make_unique<Box>(
-				gfx, rng, adist, ddist,
-				odist, rdist, bdist
-				);
-			//switch (typedist(rng))
-			//{
-			//case 0:
-			//	return std::make_unique<Pyramid>(
-			//		gfx, rng, adist, ddist,
-			//		odist, rdist
-			//		);
-			//case 1:
-			//	return std::make_unique<Box>(
-			//		gfx, rng, adist, ddist,
-			//		odist, rdist, bdist
-			//		);
+			//return std::make_unique<Box>(
+			//	gfx, rng, adist, ddist,
+			//	odist, rdist, bdist
+			//	);
+			switch (typedist(rng))
+			{
+			case 0:
+				return std::make_unique<Pyramid>(
+					gfx, rng, adist, ddist,
+					odist, rdist
+					);
+			case 1:
+				return std::make_unique<Box>(
+					gfx, rng, adist, ddist,
+					odist, rdist, bdist
+					);
 			//case 2:
 			//	return std::make_unique<Melon>(
 			//		gfx, rng, adist, ddist,
 			//		odist, rdist, longdist, latdist
 			//		);
-			//case 3:
-			//	return std::make_unique<Sheet>(
-			//		gfx, rng, adist, ddist, odist, rdist
-			//		);
-			//default:
-			//	assert(false && "bad drawable type in factory");
-			//	return {};
-			//}
+			case 2:
+				return std::make_unique<Sheet>(
+					gfx, rng, adist, ddist, odist, rdist
+					);
+			default:
+				assert(false && "bad drawable type in factory");
+				return {};
+			}
 		}
 	private:
 		Graphics& gfx;
@@ -61,9 +61,9 @@ App::App()
 		std::uniform_real_distribution<float> odist{ 0.0f,PI * 0.08f };
 		std::uniform_real_distribution<float> rdist{ 6.0f,20.0f };
 		std::uniform_real_distribution<float> bdist{ 0.4f,3.0f };
-		//std::uniform_int_distribution<int> latdist{ 5,20 };
-		//std::uniform_int_distribution<int> longdist{ 10,40 };
-		//std::uniform_int_distribution<int> typedist{ 0,3 };
+		std::uniform_int_distribution<int> latdist{ 5,20 };
+		std::uniform_int_distribution<int> longdist{ 10,40 };
+		std::uniform_int_distribution<int> typedist{ 0,2 };
 	};
 
 	drawables.reserve(nDrawables);
@@ -97,6 +97,7 @@ void App::DoFrame()
 	wnd.Gfx().SetCamera(camera.GetMatrix());
 	//ここで定数ピクセルバッファをバインドしているので
 	//Boxにライトの位置が渡されている？
+	// = 次に定数バッファがバインドされるまではライトの定数バッファが渡される
 	light.Bind(wnd.Gfx());
 	for (auto& b : drawables) {
 		b->Update(dt);

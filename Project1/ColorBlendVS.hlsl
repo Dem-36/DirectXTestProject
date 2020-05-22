@@ -1,6 +1,7 @@
 cbuffer CBuf
 {
-    matrix transform;
+    matrix model;
+    matrix modelViewProjection;
 };
 
 struct appdata
@@ -18,7 +19,7 @@ struct VSOut
 VSOut main(appdata v)
 {
     VSOut vso;
-    vso.position = mul(float4(v.vertex, 1.0f), transform);
+    vso.position = mul(float4(v.vertex, 1.0f), modelViewProjection);
     vso.color = v.color;
     return vso;
 }
