@@ -31,7 +31,6 @@ public:
 		}
 	}
 
-	//asserts face-indipendent vertices 1/ normals cleared to zero
 	//取得した頂点位置から法線を求める
 	void SetNormalsIndependentFlat()noexcept {
 		using namespace DirectX;
@@ -56,6 +55,7 @@ public:
 public:
 	//ここに保存される頂点情報はモデル座標
 	std::vector<T> vertices;
+	//インデックスバッファ
 	std::vector<unsigned short> indices;
 };
 

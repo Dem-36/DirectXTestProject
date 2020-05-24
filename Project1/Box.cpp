@@ -12,9 +12,7 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	std::uniform_real_distribution<float>& rdist,
 	std::uniform_real_distribution<float>& bdist,
 	DirectX::XMFLOAT3 materialColor)
-	:r(rdist(rng)), droll(ddist(rng)), dpitch(ddist(rng)), dyaw(ddist(rng)),
-	dphi(odist(rng)), dtheta(odist(rng)), dchi(odist(rng)), chi(adist(rng)),
-	theta(adist(rng)), phi(adist(rng))
+	:TestObject(gfx,rng,adist,ddist,odist,rdist)
 {
 	namespace dx = DirectX;
 
@@ -26,6 +24,7 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 		};
 
 		auto model = Cube::MakeIndependent<Vertex>();
+		//boxの法線情報を計算する
 		model.SetNormalsIndependentFlat();
 
 		//頂点バッファの作成
@@ -62,8 +61,9 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 
 	struct PSMaterialConstant {
-		dx::XMFLOAT3 color;
-		float padding;
+		alignas(16) dx::XMFLOAT3 color;
+		float specularIntensity = 0.6f;
+		float specularPower = 30.0f;
 	}colorConst;
 
 	colorConst.color = materialColor;
@@ -77,24 +77,10 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 		dx::XMMatrixScaling(1.0f, 1.0f, bdist(rng)));
 }
 
-void Box::Update(float dt) noexcept
-{
-	roll += droll * dt;
-	pitch += dpitch * dt;
-	yaw += dyaw * dt;
-	theta += dtheta * dt;
-	phi += dphi * dt;
-	chi += dchi * dt;
-}
 
 //モデル行列を返す
 DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 {
 	namespace dx = DirectX;
-	//XMLoadFloat3×3 = 3×3行列をXMMATRIXに変換する mtはモデル行列
-	//XMMatrixRotationRollPitchYaw = 指定されたオイラー角に基づいて回転行列を作成
-	return dx::XMLoadFloat3x3(&mt) *
-		dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-		dx::XMMatrixTranslation(r, 0.0f, 0.0f) *
-		dx::XMMatrixRotationRollPitchYaw(theta, phi, chi);
+	return dx::XMLoadFloat3x3(&mt) * TestObject::GetTransformXM();
 }

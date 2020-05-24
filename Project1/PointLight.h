@@ -12,7 +12,7 @@ public:
 	void SpawnControlWindow()noexcept;
 	void Reset()noexcept;
 	void Draw(Graphics& gfx)const noexcept;
-	void Bind(Graphics& gfx)const noexcept;
+	void Bind(Graphics& gfx,DirectX::FXMMATRIX viewMatrix)const noexcept;
 private:
 	struct PointLightCBuf {
 		alignas(16)	DirectX::XMFLOAT3 position;         //ƒ‰ƒCƒg‚ÌˆÊ’u

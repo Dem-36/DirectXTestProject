@@ -14,6 +14,8 @@ cbuffer LightBuf
 cbuffer ObjectCBuffer
 {
     float3 materialColor;      //マテリアル色
+    float specularIntensity;
+    float specularPower;
 };
 
 struct v2f
@@ -35,6 +37,15 @@ float4 main(v2f i) : SV_TARGET
     const float att = 1.0f / (attConst + attLin * distToL + attQuad * (distToL * distToL));
     //diffuse intensity
     const float3 diffuse = diffuseColor * diffuseIntensity * att * max(0.0f, dot(dirToL, i.normal));
-    return float4(saturate(diffuse + ambient) * materialColor, 1.0f);
+    
+    //specular
+    const float3 w = i.normal * dot(vToL, i.normal);
+    //refrect
+    const float3 r = w * 2.0f - vToL;
+    //calculate specular intensity based on angle between viewing vector
+    const float3 specular = att * (diffuseColor * diffuseIntensity) * specularIntensity * 
+    pow(max(0.0f, dot(normalize(-r), normalize(i.worldPosition))), specularPower);
+    
+    return float4(saturate(diffuse + ambient + specular) * materialColor, 1.0f);
 
 }

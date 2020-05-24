@@ -18,12 +18,11 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent,UINT slot)
 //それを描画パイプラインにバインドする(TransformCbuf事態は別にバインドを行わない)
 void TransformCbuf::Bind(Graphics& gfx) noexcept
 {
-	const auto model = parent.GetTransformXM();
+	const auto modelView = parent.GetTransformXM() * gfx.GetCamera();
 	const Transforms transform = {
-	DirectX::XMMatrixTranspose(model),
+	DirectX::XMMatrixTranspose(modelView),
 	DirectX::XMMatrixTranspose(
-		model *
-		gfx.GetCamera() *
+		modelView *
 		gfx.GetProjection()
 		),
 	};

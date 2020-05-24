@@ -2,7 +2,6 @@
 #include"WinExceptionMacro.h"
 #include"IndexBuffer.h"
 #include<cassert>
-#include<typeinfo>
 
 void Drawable::Draw(Graphics& gfx) const noexcept
 {
