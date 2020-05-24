@@ -10,7 +10,8 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	std::uniform_real_distribution<float>& ddist,
 	std::uniform_real_distribution<float>& odist,
 	std::uniform_real_distribution<float>& rdist,
-	std::uniform_real_distribution<float>& bdist)
+	std::uniform_real_distribution<float>& bdist,
+	DirectX::XMFLOAT3 materialColor)
 	:r(rdist(rng)), droll(ddist(rng)), dpitch(ddist(rng)), dyaw(ddist(rng)),
 	dphi(odist(rng)), dtheta(odist(rng)), dchi(odist(rng)), chi(adist(rng)),
 	theta(adist(rng)), phi(adist(rng))
@@ -59,6 +60,15 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	//すべてのBoxに個別の情報があるため
 	//(定数バッファは共通だが、GetTransformXM()の中身がそれぞれ違うため)
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
+
+	struct PSMaterialConstant {
+		dx::XMFLOAT3 color;
+		float padding;
+	}colorConst;
+
+	colorConst.color = materialColor;
+	//個々で色情報を持つのでstaticではバインドしない
+	AddBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConst, 1u));
 
 	//XMMatrixを3×3行列に変換する = 拡大縮小行列
 	//bdist(rng)でZの大きさをランダムで指定

@@ -5,12 +5,12 @@ std::unique_ptr<VertexConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::
 
 //コンストラクタ
 //定数バッファはモデル行列
-TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent)
+TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent,UINT slot)
 	:parent(parent)
 {
 	//情報を共有する
 	if (!vcbuf) {
-		vcbuf = std::make_unique<VertexConstantBuffer<Transforms>>(gfx);
+		vcbuf = std::make_unique<VertexConstantBuffer<Transforms>>(gfx,slot);
 	}
 }
 

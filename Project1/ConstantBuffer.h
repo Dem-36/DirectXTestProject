@@ -27,7 +27,9 @@ public:
 	}
 
 	//コンストラクタ
-	ConstantBuffer(Graphics& gfx, const T& consts) {
+	ConstantBuffer(Graphics& gfx, const T& consts, UINT slot = 0u)
+		:slot(slot)
+	{
 
 		INFOMAN(gfx);
 		D3D11_BUFFER_DESC bd = {};
@@ -44,7 +46,9 @@ public:
 	}
 
 	//コンストラクタ
-	ConstantBuffer(Graphics& gfx) {
+	ConstantBuffer(Graphics& gfx, UINT slot = 0u)
+		:slot(slot)
+	{
 		INFOMAN(gfx);
 
 		D3D11_BUFFER_DESC bd = {};
@@ -59,17 +63,19 @@ public:
 
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer = nullptr;
+	UINT slot; //定数バッファのスロット(デフォルトは0)
 };
 
 //頂点シェーダーの定数バッファ
 template<typename T>
 class VertexConstantBuffer :public ConstantBuffer<T> {
 	using ConstantBuffer<T>::pConstantBuffer;
+	using ConstantBuffer<T>::slot;
 	using Bindable::GetContext;
 public:
 	using ConstantBuffer<T>::ConstantBuffer;
 	void Bind(Graphics& gfx)noexcept override {
-		GetContext(gfx)->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
+		GetContext(gfx)->VSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
 	}
 };
 
@@ -77,11 +83,12 @@ public:
 template<typename T>
 class PixelConstantBuffer :public ConstantBuffer<T> {
 	using ConstantBuffer<T>::pConstantBuffer;
+	using ConstantBuffer<T>::slot;
 	using Bindable::GetContext;
 public:
 	using ConstantBuffer<T>::ConstantBuffer;
 	void Bind(Graphics& gfx)noexcept override {
-		GetContext(gfx)->PSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
+		GetContext(gfx)->PSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
 	}
 };
 

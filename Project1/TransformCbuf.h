@@ -14,7 +14,7 @@ private:
 		DirectX::XMMATRIX modelViewProjection;
 	};
 public:
-	TransformCbuf(Graphics& gfx, const Drawable& parent);
+	TransformCbuf(Graphics& gfx, const Drawable& parent,UINT slot = 0u);
 	//頂点定数バッファをパイプラインにバインドする
 	void Bind(Graphics& gfx)noexcept override;
 private:
