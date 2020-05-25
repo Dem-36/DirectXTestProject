@@ -37,7 +37,7 @@ public:
 		bd.Usage = D3D11_USAGE_DYNAMIC;
 		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		bd.MiscFlags = 0u;
-		bd.ByteWidth = sizeof(T);
+		bd.ByteWidth = sizeof(T);                   //サイズは必ず16の倍数でないといけない
 		bd.StructureByteStride = 0u;
 
 		D3D11_SUBRESOURCE_DATA initData = {};
