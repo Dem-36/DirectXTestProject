@@ -335,7 +335,7 @@
     <ClInclude Include="AssTest.h">
       <Filter>ヘッダー ファイル\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="VertexLayout.h">
+    <ClInclude Include="Vertex.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,6 +4,7 @@
 #include<assimp/Importer.hpp>
 #include<assimp/scene.h>
 #include<assimp/postprocess.h>
+#include"Vertex.h"
 
 AssTest::AssTest(Graphics& gfx, std::mt19937 rng,
 	std::uniform_real_distribution<float>& adist,
@@ -17,10 +18,12 @@ AssTest::AssTest(Graphics& gfx, std::mt19937 rng,
 
 	if (!IsStaticInitialized()) {
 
-		struct Vertex {
-			dx::XMFLOAT3 position;
-			dx::XMFLOAT3 normal;
-		};
+		using WinVertex::VertexLayout;
+		WinVertex::VertexBuffer vbuf(std::move(
+			VertexLayout{}
+			.Append(VertexLayout::Position3D)
+			.Append(VertexLayout::Normal)
+			));
 
 		//モデルの読み込み
 		Assimp::Importer imp;
@@ -30,13 +33,11 @@ AssTest::AssTest(Graphics& gfx, std::mt19937 rng,
 		const auto pMesh = pModel->mMeshes[0];
 
 		//頂点情報の取得
-		std::vector<Vertex>vertices;
-		vertices.reserve(pMesh->mNumVertices);
 		for (unsigned int i = 0; i < pMesh->mNumVertices; i++) {
-			vertices.push_back({
-				{pMesh->mVertices[i].x * scale,pMesh->mVertices[i].y * scale,pMesh->mVertices[i].z * scale},
+			vbuf.EmplaceBack(
+				dx::XMFLOAT3{ pMesh->mVertices[i].x * scale,pMesh->mVertices[i].y * scale,pMesh->mVertices[i].z * scale },
 				*reinterpret_cast<dx::XMFLOAT3*>(&pMesh->mNormals[i])
-				});
+				);
 		}
 
 		//インデックス情報の取得
@@ -52,7 +53,7 @@ AssTest::AssTest(Graphics& gfx, std::mt19937 rng,
 		}
 
 		//頂点バッファ生成
-		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
+		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vbuf));
 		//インデックスバッファ生成
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
 
@@ -64,12 +65,7 @@ AssTest::AssTest(Graphics& gfx, std::mt19937 rng,
 
 		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PhongPS.cso"));
 
-		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
-		{
-			{ "POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
-			{ "NORMAL",0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 },
-		};
-		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+		AddStaticBind(std::make_unique<InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
 
 		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 

@@ -11,32 +11,20 @@
 
 #include"imgui/imgui.h"
 #include"AssTest.h"
-#include"VertexLayout.h"
 
 namespace dx = DirectX;
-
-void f() {
-	VertexLayout vl;
-	//戻り値が自分自身(vl)なので繰り返し同じ関数を使用可能
-	vl.Append<VertexLayout::Position3D>().Append<VertexLayout::Normal>();
-	VertexBuffer vb(std::move(vl));
-	vb.EmplaceBack(dx::XMFLOAT3{ 1.0f,1.0f,5.0f }, dx::XMFLOAT3{ 2.0f,1.0f,4.0f });
-	auto pos = vb[0].Attr<VertexLayout::Position3D>();
-}
-
 
 App::App()
 	:wnd(800, 600, "Geometry Parade"),
 	light(wnd.Gfx())
 {
+
 	class Factory {
 	public:
 		Factory(Graphics& gfx)
 			:
 			gfx(gfx)
-		{
-			f();
-		}
+		{}
 		std::unique_ptr<Drawable> operator()()
 		{
 			const DirectX::XMFLOAT3 mat = { cdist(rng),cdist(rng),cdist(rng) };
