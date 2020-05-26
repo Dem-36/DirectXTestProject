@@ -159,6 +159,9 @@
     <ClCompile Include="SkinnedBox.cpp">
       <Filter>ソース ファイル\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="AssTest.cpp">
+      <Filter>ソース ファイル\Drawable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -327,6 +330,9 @@
       <Filter>ヘッダー ファイル\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="SkinnedBox.h">
+      <Filter>ヘッダー ファイル\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="AssTest.h">
       <Filter>ヘッダー ファイル\Drawable</Filter>
     </ClInclude>
   </ItemGroup>
