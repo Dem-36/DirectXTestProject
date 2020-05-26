@@ -11,18 +11,17 @@ constexpr auto sq(const T& x)noexcept {
 	return x * x;
 }
 
+//角度の範囲固定(ラジアンで求めるため、数値がオーバーフローしないように制限する)
 template<typename T>
-T wrap_angle(T theta)noexcept {
+T wrap_angle(T theta) {
+	//2π = 360度
 	constexpr T twoPi = (T)2 * (T)PI_D;
+	float a = theta * 180.0f / PI;
 	//余りを浮動小数点の値で返す(%は整数値)
 	const T mod = (T)fmod(theta, twoPi);
-	if (mod > (T)PI_D) {
-		return mod - twoPi;
-	}
-	else if (mod < (T)PI_D) {
-		return mod + twoPi;
-	}
-	return mod;
+	//角度が180度を超えているなら-180にする
+	return (mod > (T)PI_D) ?
+		(mod - twoPi) : mod;
 }
 
 template<typename T>

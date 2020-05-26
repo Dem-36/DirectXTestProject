@@ -6,6 +6,7 @@
 
 class Bindable;
 
+//各オブジェクトが持つべき情報を保存するクラス
 class Drawable
 {
 	//DrawableBaseクラスはDrawableクラスのprivate関数を使える
@@ -22,6 +23,15 @@ public:
 	virtual void Update(float dt)noexcept = 0;
 	virtual ~Drawable() = default;
 protected:
+	template<class T>
+	T* QueryBindable()noexcept {
+		for (auto& pb : binds) {
+			if (auto pt = dynamic_cast<T*>(pb.get())) {
+				return pt;
+			}
+		}
+		return nullptr;
+	}
 	//各オブジェクトのバインド
 	void AddBind(std::unique_ptr<Bindable> bind)noexcept;
 	void AddIndexBuffer(std::unique_ptr<class IndexBuffer> ibuf)noexcept;

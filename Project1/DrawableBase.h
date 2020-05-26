@@ -4,6 +4,7 @@
 #include"Drawable.h"
 #include"IndexBuffer.h"
 
+//各オブジェクトが共通して持つ情報を保存するクラス
 template<class T>
 class DrawableBase:public Drawable
 {

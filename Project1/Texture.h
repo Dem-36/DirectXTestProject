@@ -4,7 +4,7 @@
 #include"Bindable.h"
 #include"WICTextureLoader.h"
 
-#pragma comment(lib,"DirectXTK.lib")
+//#pragma comment(lib,"DirectXTK.lib")
 
 class Texture:public Bindable
 {

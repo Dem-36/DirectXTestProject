@@ -9,8 +9,8 @@
 #include<memory>
 #include<DirectXMath.h>
 
-#pragma comment(lib,"d3d11.lib")
-#pragma comment(lib,"D3DCompiler.lib")
+//#pragma comment(lib,"d3d11.lib")
+//#pragma comment(lib,"D3DCompiler.lib")
 
 //DirectX11‚Ìˆ—‚ğs‚¤
 class Graphics

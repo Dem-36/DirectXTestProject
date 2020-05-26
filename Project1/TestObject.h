@@ -3,6 +3,7 @@
 
 #include"DrawableBase.h"
 #include<random>
+#include"WinMath.h"
 
 template<class T>
 class TestObject :public DrawableBase<T> {
@@ -19,23 +20,28 @@ public:
 	}
 
 	void Update(float dt)noexcept {
-		roll += droll * dt;
-		pitch += dpitch * dt;
-		yaw += dyaw * dt;
-		theta += dtheta * dt;
-		phi += dphi * dt;
-		chi += dchi * dt;
+		//オブジェクトの回転角度
+		roll = wrap_angle(roll + droll * dt);
+		pitch = wrap_angle(pitch + dpitch * dt);
+		yaw = wrap_angle(yaw + dyaw * dt);
+		//焦点からの回転角度
+		theta = wrap_angle(theta + dtheta * dt);
+		phi = wrap_angle(phi + dphi * dt);
+		chi = wrap_angle(chi + dchi * dt);
 	}
 	DirectX::XMMATRIX GetTransformXM()const noexcept {
 		//XMLoadFloat3×3 = 3×3行列をXMMATRIXに変換する mtはモデル行列
         //XMMatrixRotationRollPitchYaw = 指定されたオイラー角に基づいて回転行列を作成
 
 		namespace dx = DirectX;
+		//1:オブジェクトの中心に沿って回転
+		//2:焦点に向かって移動(x)
+		//3:焦点に沿って回転
 		return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
 			dx::XMMatrixTranslation(r, 0.0f, 0.0f) *
 			dx::XMMatrixRotationRollPitchYaw(theta, phi, chi);
 	}
-private:
+protected:
 	//positional
 	float r;
 	float roll = 0.0f;   //x

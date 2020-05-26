@@ -2,6 +2,7 @@
 #define _BOX_H_
 
 #include"TestObject.h"
+#include"ConstantBuffer.h"
 #include<random>
 
 class Box :public TestObject<Box>
@@ -17,6 +18,19 @@ public:
 		DirectX::XMFLOAT3 materialColor);
 	//モデル行列を返す
 	DirectX::XMMATRIX GetTransformXM()const noexcept override;
+	//falseならウィンドウを閉じる
+	bool SpawnControlWindow(int id, Graphics& gfx)noexcept;
+private:
+	void SyncMaterial(Graphics& gfx)noexcept;
+private:
+	struct PSMaterialConstant {
+		DirectX::XMFLOAT3 color;
+		float specularIntensity = 0.6f;
+		float specularPower = 30.0f;
+		//16の倍数であるため、調整として入れておく
+		float padding[3];
+	}materialConstants;
+	using MaterialCBuf = PixelConstantBuffer<PSMaterialConstant>;
 private:
 	//3×3の行列
 	DirectX::XMFLOAT3X3 mt;
