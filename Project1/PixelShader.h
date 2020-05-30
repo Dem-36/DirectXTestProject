@@ -5,16 +5,19 @@
 #include"Bindable.h"
 #include"WinExceptionMacro.h"
 
-//ピクセルシェーダー作成
-class PixelShader:public Bindable
+namespace Bind
 {
-public:
-	//コンストラクタ
-	PixelShader(Graphics& gfx, const std::wstring& path);
-	//パイプラインにバインド
-	void Bind(Graphics& gfx)noexcept override;
-protected:
-	std::string path;
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader = nullptr;
-};
+	//ピクセルシェーダー作成
+	class PixelShader :public Bindable
+	{
+	public:
+		//コンストラクタ
+		PixelShader(Graphics& gfx, const std::wstring& path);
+		//パイプラインにバインド
+		void Bind(Graphics& gfx)noexcept override;
+	protected:
+		std::string path;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader = nullptr;
+	};
+}
 #endif

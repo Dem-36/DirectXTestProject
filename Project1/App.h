@@ -7,6 +7,7 @@
 #include"Camera.h"
 #include"PointLight.h"
 #include<set>
+#include"Mesh.h"
 
 class App
 {
@@ -17,24 +18,25 @@ public:
 	~App();
 private:
 	void DoFrame();
-	void SpawnSimulationWindow()noexcept;
-	void SpawnBoxWindowManagerWindow()noexcept;
-	void SpawnBoxWindows()noexcept;
+	void ShowModelWindow();
 private:
 	ImGuiManager imgui;
 	Window wnd;
 	Timer timer;
-	std::vector<std::unique_ptr<class Drawable>> drawables;
-	std::vector<class Box*> boxes;
 	float speed_factor = 1.0f;
-	static constexpr size_t nDrawables = 100;
 	Camera camera;
 	//疑似的に太陽を描画する
 	PointLight light;
+	Model nano{ wnd.Gfx(),"Models\\nanosuit.obj" };
 
-	//値を持つか、または存在しないか
-	std::optional<int> comboBoxIndex;
-	//値自体がキーとなる
-	std::set<int>boxControlIds;
+	struct {
+		float roll = 0.0f;
+		float pitch = 0.0f;
+		float yaw = 0.0f;
+		float x = 0.0f;
+		float y = 0.0f;
+		float z = 0.0f;
+	}position;
+
 };
 #endif

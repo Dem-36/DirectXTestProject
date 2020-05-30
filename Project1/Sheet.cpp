@@ -5,6 +5,8 @@
 #include"Texture.h"
 #include"Sampler.h"
 
+using namespace Bind;
+
 Sheet::Sheet(Graphics& gfx, std::mt19937& rng, 
 	std::uniform_real_distribution<float>& adist, 
 	std::uniform_real_distribution<float>& ddist, 

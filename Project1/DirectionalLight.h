@@ -21,7 +21,7 @@ private:
 	};
 private:
 	DirectionalLightBuffer data;
-	mutable PixelConstantBuffer<DirectionalLightBuffer> buffer;
+	mutable Bind::PixelConstantBuffer<DirectionalLightBuffer> buffer;
 	mutable SolidSphere lightMesh;
 };
 

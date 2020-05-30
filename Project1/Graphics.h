@@ -9,13 +9,14 @@
 #include<memory>
 #include<DirectXMath.h>
 
-//#pragma comment(lib,"d3d11.lib")
-//#pragma comment(lib,"D3DCompiler.lib")
+namespace Bind {
+	class Bindable;
+}
 
 //DirectX11‚Ìˆ—‚ğs‚¤
 class Graphics
 {
-	friend class Bindable;
+	friend Bind::Bindable;
 public:
 	Graphics(HWND hWnd);
 	Graphics(const Graphics&) = delete;

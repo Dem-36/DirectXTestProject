@@ -4,6 +4,8 @@
 #include"Cube.h"
 #include"imgui\imgui.h"
 
+using namespace Bind;
+
 //コンストラクタ
 Box::Box(Graphics& gfx, std::mt19937& rng,
 	std::uniform_real_distribution<float>& adist,

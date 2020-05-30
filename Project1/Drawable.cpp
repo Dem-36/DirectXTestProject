@@ -3,6 +3,8 @@
 #include"IndexBuffer.h"
 #include<cassert>
 
+using namespace Bind;
+
 void Drawable::Draw(Graphics& gfx) const noexcept
 {
 	//各オブジェクトでバインドするもの
@@ -24,7 +26,7 @@ void Drawable::AddBind(std::unique_ptr<Bindable> bind) noexcept
 	binds.push_back(std::move(bind));
 }
 
-void Drawable::AddIndexBuffer(std::unique_ptr<class IndexBuffer> ibuf) noexcept
+void Drawable::AddIndexBuffer(std::unique_ptr<IndexBuffer> ibuf) noexcept
 {
 	assert("Attempting to add index buffer a second time" && pIndexBuffer == nullptr);
 	//ポインタが指す先のデータを変更不可なだけで、ポインタを移動することは可能。

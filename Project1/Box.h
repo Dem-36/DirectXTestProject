@@ -30,7 +30,7 @@ private:
 		//16‚Ì”{”‚Å‚ ‚é‚½‚ßA’²®‚Æ‚µ‚Ä“ü‚ê‚Ä‚¨‚­
 		float padding[3];
 	}materialConstants;
-	using MaterialCBuf = PixelConstantBuffer<PSMaterialConstant>;
+	using MaterialCBuf = Bind::PixelConstantBuffer<PSMaterialConstant>;
 private:
 	//3~3‚Ìs—ñ
 	DirectX::XMFLOAT3X3 mt;
