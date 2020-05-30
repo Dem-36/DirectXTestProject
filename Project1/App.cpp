@@ -50,6 +50,10 @@ App::App()
 				return std::make_unique<AssTest>(
 					gfx, rng, adist, ddist, odist, rdist,mat,1.5f
 					);
+			case 5:
+				return std::make_unique<Sheet>(
+					gfx, rng, adist, ddist, odist, rdist
+					);
 			default:
 				assert(false && "impossible drawable option in factory");
 				return {};
@@ -59,7 +63,7 @@ App::App()
 	private:
 		Graphics& gfx;
 		std::mt19937 rng{ std::random_device{}() };
-		std::uniform_int_distribution<int> sdist{ 0,4 };
+		std::uniform_int_distribution<int> sdist{ 0,0 };
 		std::uniform_real_distribution<float> adist{ 0.0f,PI * 2.0f };
 		std::uniform_real_distribution<float> ddist{ 0.0f,PI * 0.5f }; //0 ~ 90
 		std::uniform_real_distribution<float> odist{ 0.0f,PI * 0.08f };
