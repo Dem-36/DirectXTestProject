@@ -41,33 +41,21 @@ void App::DoFrame()
 	// = 次に定数バッファがバインドされるまではライトの定数バッファが渡される
 	light.Bind(wnd.Gfx(), wnd.Gfx().GetCamera());
 
-	const auto transform = dx::XMMatrixRotationRollPitchYaw(position.roll, position.pitch, position.yaw) * 
-		dx::XMMatrixTranslation(position.x,position.y,position.z);
-	nano.Draw(wnd.Gfx(), transform);
-
+	nano.Draw(wnd.Gfx());
 	light.Draw(wnd.Gfx());
 
 	camera.SpawnControlWindow();
 	light.SpawnControlWindow();
-	ShowModelWindow();
+	ShowImGuiDemoWindow();
+	nano.ShowWindow();
 	//present
 	wnd.Gfx().EndFrame();
 }
 
-void App::ShowModelWindow()
+void App::ShowImGuiDemoWindow()
 {
-	if (ImGui::Begin("Model")) {
-		using namespace std::string_literals;
-
-		ImGui::Text("Orientation");
-		ImGui::SliderAngle("Roll", &position.roll, -180.0f, 180.0f);
-		ImGui::SliderAngle("Pitch", &position.pitch, -180.0f, 180.0f);
-		ImGui::SliderAngle("Yaw", &position.yaw, -180.0f, 180.0f);
-
-		ImGui::Text("Position");
-		ImGui::SliderFloat("X", &position.x, -20.0f, 20.0f);
-		ImGui::SliderFloat("Y", &position.y, -20.0f, 20.0f);
-		ImGui::SliderFloat("Z", &position.z, -20.0f, 20.0f);
+	static bool show_demo_window = true;
+	if (show_demo_window) {
+		ImGui::ShowDemoWindow(&show_demo_window);
 	}
-	ImGui::End();
 }
