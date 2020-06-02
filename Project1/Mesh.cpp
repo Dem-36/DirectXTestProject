@@ -64,13 +64,13 @@ void Node::AddChild(std::unique_ptr<Node> pChild) noexcept
 
 //UnityのHierarcyのように
 //ツリー構造を表示する
-void Node::RenderTree()const noexcept {
+void Node::ShowTree()const noexcept {
 
 	//ツリーノードが展開されているなら
 	//すべての子を再帰的にレンダリングする
 	if (ImGui::TreeNode(nodeName.c_str())) {
 		for (const auto& pChild : childPtrs) {
-			pChild->RenderTree();
+			pChild->ShowTree();
 		}
 		ImGui::TreePop();
 	}
@@ -78,7 +78,44 @@ void Node::RenderTree()const noexcept {
 
 
 // Model
+
+class ModelWindow {
+public:
+	void Show(const char* windowName, const Node& root)noexcept {
+		windowName = windowName ? windowName : "Model";
+		if (ImGui::Begin(windowName)) {
+			ImGui::Columns(2, nullptr, true);
+			root.ShowTree();
+
+			ImGui::NextColumn();
+			ImGui::Text("Orientation(Rotation)");
+			ImGui::SliderAngle("Roll", &position.roll, -180.0f, 180.0f);
+			ImGui::SliderAngle("Pitch", &position.pitch, -180.0f, 180.0f);
+			ImGui::SliderAngle("Yaw", &position.yaw, -180.0f, 180.0f);
+			ImGui::Text("Position");
+			ImGui::SliderFloat("X", &position.x, -20.0f, 20.0f);
+			ImGui::SliderFloat("Y", &position.y, -20.0f, 20.0f);
+			ImGui::SliderFloat("Z", &position.z, -20.0f, 20.0f);
+		}
+		ImGui::End;
+	}
+	DirectX::XMMATRIX GetTransform()const noexcept {
+		return DirectX::XMMatrixRotationRollPitchYaw(position.roll, position.pitch, position.yaw) *
+			DirectX::XMMatrixTranslation(position.x, position.y, position.z);
+	}
+private:
+	struct {
+		float roll = 0.0f;
+		float pitch = 0.0f;
+		float yaw = 0.0f;
+		float x = 0.0f;
+		float y = 0.0f;
+		float z = 0.0f;
+	}position;
+};
+
 Model::Model(Graphics& gfx, const std::string fileName)
+	:pWindow(std::make_unique<ModelWindow>())
 {
 	Assimp::Importer imp;
 	const auto pScene = imp.ReadFile(fileName.c_str(),
@@ -96,31 +133,16 @@ Model::Model(Graphics& gfx, const std::string fileName)
 void Model::Draw(Graphics& gfx) const
 {
 	//モデル自身のtransform情報
-	const auto transform = DirectX::XMMatrixRotationRollPitchYaw(position.roll, position.pitch, position.yaw) *
-		DirectX::XMMatrixTranslation(position.x, position.y, position.z);
-	pRoot->Draw(gfx, transform);
+	pRoot->Draw(gfx, pWindow->GetTransform());
 }
 
 //ImGuiのウィンドウを作成する
 void Model::ShowWindow(const char* windowName)noexcept {
-	//中身がnull出ないならそのまま、nullならModelにする
-	windowName = windowName ? windowName : "Model";
+	pWindow->Show(windowName, *pRoot);
+}
 
-	if (ImGui::Begin(windowName)) {
-		ImGui::Columns(2, nullptr, true);
-		pRoot->RenderTree();
+Model::~Model()noexcept {
 
-		ImGui::NextColumn();
-		ImGui::Text("Orientation(Rotation)");
-		ImGui::SliderAngle("Roll", &position.roll, -180.0f, 180.0f);
-		ImGui::SliderAngle("Pitch", &position.pitch, -180.0f, 180.0f);
-		ImGui::SliderAngle("Yaw", &position.yaw, -180.0f, 180.0f);
-		ImGui::Text("Position");
-		ImGui::SliderFloat("X", &position.x, -20.0f, 20.0f);
-		ImGui::SliderFloat("Y", &position.y, -20.0f, 20.0f);
-		ImGui::SliderFloat("Z", &position.z, -20.0f, 20.0f);
-	}
-	ImGui::End();
 }
 
 std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh)
