@@ -3,8 +3,8 @@
 
 #include"WinInc.h"
 #include"WinExceptionMacro.h"
-#include"Keyboard.h"
-#include"Mouse.h"
+#include"Utility/Keyboard.h"
+#include"Utility/Mouse.h"
 #include"Graphics.h"
 #include <optional>
 #include<memory>

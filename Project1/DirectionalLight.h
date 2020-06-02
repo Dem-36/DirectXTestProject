@@ -2,8 +2,8 @@
 #define _DIRECTIONALLIGHT_H_
 
 #include "Graphics.h"
-#include "ConstantBuffer.h"
-#include "SolidSphere.h"
+#include "Bindable/ConstantBuffer.h"
+#include "Drawable/SolidSphere.h"
 
 class DirectionalLight
 {

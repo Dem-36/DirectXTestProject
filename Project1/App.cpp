@@ -1,10 +1,9 @@
 #include "App.h"
-#include"WinMath.h"
+#include"Utility/WinMath.h"
 #include<algorithm>
 #include<memory>
 
 #include"imgui/imgui.h"
-#include"AssTest.h"
 
 namespace dx = DirectX;
 

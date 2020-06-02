@@ -1,9 +1,9 @@
 #ifndef _MESH_H_
 #define _MESH_H_
 
-#include"DrawableBase.h"
+#include"Drawable/DrawableBase.h"
 #include"Vertex.h"
-#include"BindableBase.h"
+#include"Bindable/BindableBase.h"
 #include<assimp/Importer.hpp>
 #include<assimp/scene.h>
 #include<assimp/postprocess.h>
